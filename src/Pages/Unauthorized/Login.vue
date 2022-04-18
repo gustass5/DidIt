@@ -1,4 +1,27 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { initializeApp } from 'firebase/app';
+import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+
+const firebaseConfig = {
+	apiKey: import.meta.env.VITE_APP_API_KEY,
+	authDomain: import.meta.env.VITE_APP_AUTH_DOMAIN,
+	projectId: import.meta.env.VITE_APP_PROJECT_ID,
+	storageBucket: import.meta.env.VITE_APP_STORAGE_BUCKET,
+	messagingSenderId: import.meta.env.VITE_APP_MESSAGING_SENDER_ID,
+	appId: import.meta.env.VITE_APP_APP_ID,
+	measurementId: import.meta.env.VITE_APP_MEASUREMENT_ID
+};
+
+const app = initializeApp(firebaseConfig);
+
+const provider = new GoogleAuthProvider();
+const auth = getAuth();
+
+async function handleClick() {
+	const response = await signInWithPopup(auth, provider);
+	console.log(response, GoogleAuthProvider.credentialFromResult(response));
+}
+</script>
 <template>
 	<div class="flex items-center justify-center h-screen bg-amber-300">
 		<main
@@ -16,6 +39,7 @@
 				<div>DID IT</div>
 			</div>
 			<button
+				v-on:click="handleClick"
 				class="
 					py-2
 					px-4
