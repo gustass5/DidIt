@@ -2,6 +2,9 @@ export const routes = [
 	{ path: '/', component: () => import('../../Pages/Unauthorized/Login.vue') },
 	{
 		path: '/dashboard',
-		component: () => import('../../Pages/Authorized/Dashboard.vue')
+		component: () => import('../../Pages/Authorized/Dashboard.vue'),
+		meta: {
+			requiredAuth: true
+		}
 	}
 ];
