@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, reactive } from 'vue';
 
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 
@@ -13,6 +13,7 @@ import Table from '../../components/table/Table.vue';
 const router = useRouter();
 
 const currentUser = ref(null);
+const state = reactive({ name: null });
 const lists = ref([]);
 
 const isLoggedIn = ref(false);
@@ -24,10 +25,12 @@ onMounted(() => {
 		if (user) {
 			isLoggedIn.value = true;
 			currentUser.value = user;
+			state.name = currentUser.value.displayName;
 			getLists();
 		} else {
 			isLoggedIn.value = false;
 			currentUser.value = null;
+			state.name = null;
 		}
 	});
 });
@@ -66,7 +69,7 @@ const getLists = () => {
 				/>
 				<span class="text-2xl text-gray-500 font-semibold">DIDIT</span>
 			</div>
-			<UserMenu />
+			<UserMenu v-bind:name="state.name" />
 		</header>
 
 		<main class="flex flex-1 h-full">
