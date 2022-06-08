@@ -82,7 +82,7 @@ const userNavigation = [
 					>
 						<span class="sr-only">Open user menu</span>
 						<img
-							class="h-8 w-8 rounded-full"
+							class="h-10 w-10 rounded-full"
 							:src="imageUrl.value"
 							alt=""
 						/>
