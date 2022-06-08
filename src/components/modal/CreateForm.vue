@@ -19,7 +19,7 @@ const onSubmit = async event => {
 		name: name.value,
 		author_id: props.user.uid,
 		author_name: props.user.displayName,
-		participants: [],
+		participants: [{ [props.user.uid]: props.user.displayName }],
 		invitations: [],
 		deleted: false,
 		creation_date: new Date().toISOString()
