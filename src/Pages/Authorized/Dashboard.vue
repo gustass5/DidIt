@@ -149,13 +149,17 @@ const getListItems = (id: string) => {
 						v-bind:listId="currentList"
 					/>
 				</div>
-				<Table
-					class="py-6"
-					v-bind:listId="currentList"
-					v-bind:user="currentUser"
-					v-bind:rows="currentListItems"
-					v-bind:participants="participants"
-				/>
+				<div class="flex w-full h-full flex-col bg-white shadow lg:rounded-md">
+					<div class="p-2">
+						<Table
+							class="py-6"
+							v-bind:listId="currentList"
+							v-bind:user="currentUser"
+							v-bind:rows="currentListItems"
+							v-bind:participants="participants"
+						/>
+					</div>
+				</div>
 			</div>
 		</main>
 	</div>

@@ -11,7 +11,9 @@ const props = defineProps<{
 </script>
 
 <template>
-	<table class="min-w-full divide-y divide-gray-200">
+	<table
+		class="min-w-full divide-y divide-gray-200 border-2 border-gray-100 rounded-md"
+	>
 		<TableHeader />
 		<tbody class="bg-white divide-y divide-gray-200">
 			<TableRow
