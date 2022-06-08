@@ -9,10 +9,17 @@ import {
 	MenuItem,
 	MenuItems
 } from '@headlessui/vue';
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
+import { signOut, getAuth } from 'firebase/auth';
+import { useRouter } from 'vue-router';
 
-const props = defineProps<{ name: string | null }>();
+const props = defineProps<{ name: string | null; auth: any | null }>();
 const imageUrl = ref('https://avatars.dicebear.com/api/initials/gb.svg');
+const router = useRouter();
+let auth;
+onMounted(() => {
+	auth = getAuth();
+});
 
 watch(
 	() => props.name,
@@ -40,6 +47,12 @@ const userNavigation = [
 	{ name: 'Settings', href: '#' },
 	{ name: 'Sign out', href: '#' }
 ];
+
+const handleSignOut = () => {
+	signOut(auth).then(() => {
+		router.push('/');
+	});
+};
 </script>
 
 <template>
@@ -116,14 +129,15 @@ const userNavigation = [
 							:key="item.name"
 							v-slot="{ active }"
 						>
-							<a
-								:href="item.href"
+							<button
+								v-on:click="handleSignOut"
 								:class="[
 									active ? 'bg-gray-100' : '',
-									'block px-4 py-2 text-sm text-gray-700'
+									'block px-4 py-2 text-sm text-gray-700 w-full text-left'
 								]"
-								>{{ item.name }}</a
 							>
+								{{ item.name }}
+							</button>
 						</MenuItem>
 					</MenuItems>
 				</transition>

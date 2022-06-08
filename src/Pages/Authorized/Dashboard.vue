@@ -61,12 +61,6 @@ watch(currentList, (newCurrentList, oldCurrentList) => {
 	participants.value = findList === undefined ? [] : findList.data.participants;
 });
 
-const handleSignOut = () => {
-	signOut(auth).then(() => {
-		router.push('/');
-	});
-};
-
 const getLists = () => {
 	if (listSubscription.value !== null) {
 		listSubscription.value();
