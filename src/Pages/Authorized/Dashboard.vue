@@ -1,20 +1,23 @@
 <script setup lang="ts">
-import { onMounted, ref, reactive } from 'vue';
+import { onMounted, ref, reactive, watch } from 'vue';
 
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 
-import { getFirestore, collection, getDocs, where } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, doc, where } from 'firebase/firestore';
 import { useRouter } from 'vue-router';
 import { db } from '../../main';
 import UserMenu from '../../components/UserMenu.vue';
 import NavigationItem from '../../components/NavigationItem.vue';
 import Table from '../../components/table/Table.vue';
+import CreateForm from '../../components/modal/CreateForm.vue';
+import CreateItemForm from '../../components/modal/CreateItemForm.vue';
 
 const router = useRouter();
 
 const currentUser = ref(null);
-const state = reactive({ name: null });
+const state = reactive({ name: null, currentList: '' });
 const lists = ref([]);
+const currentListItems = ref([]);
 
 const isLoggedIn = ref(false);
 
@@ -40,26 +43,43 @@ const handleSignOut = () => {
 		router.push('/');
 	});
 };
+
 const getLists = () => {
 	const listsCollection = collection(getFirestore(), 'lists');
-	getDocs(
-		listsCollection,
-		where('participants', 'array-contains', currentUser.value.uid)
-	)
+	getDocs(listsCollection)
 		.then(listsSnapshot => {
-			return listsSnapshot.docs.map(list => list.data());
+			return listsSnapshot.docs.map(list => {
+				return { data: list.data(), id: list.id };
+			});
 		})
 		.then(receivedLists => {
 			lists.value = receivedLists;
-			getDocs();
+			if (lists.value.length > 0) {
+				getListItems(lists.value[0].id);
+			}
+		});
+};
+
+const getListItems = (id: string) => {
+	state.currentList = id;
+	const itemsCollection = collection(getFirestore(), `lists/${id}/items`);
+
+	getDocs(itemsCollection)
+		.then(itemsSnapshot => {
+			return itemsSnapshot.docs.map(item => {
+				return { data: item.data(), id: item.id };
+			});
+		})
+		.then(receivedItems => {
+			currentListItems.value = receivedItems;
 		});
 };
 </script>
 
 <template>
-	<div class="flex flex-col min-h-full bg-gray-100">
+	<div class="flex flex-col h-screen bg-gray-100">
 		<header
-			class="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8 bg-white"
+			class="flex items-center justify-between py-4 px-4 sm:px-6 lg:px-8 bg-white"
 		>
 			<div class="flex items-center space-x-4">
 				<img
@@ -72,14 +92,31 @@ const getLists = () => {
 			<UserMenu v-bind:name="state.name" />
 		</header>
 
-		<main class="flex flex-1 h-full">
-			<nav class="w-[300px] bg-gray-800">
-				<ul class="flex flex-col">
-					<NavigationItem v-for="list in lists" v-bind:name="list.name" />
+		<main class="flex flex-1 min-h-0">
+			<div class="flex flex-col w-[300px] bg-gray-800 p-2">
+				<CreateForm v-bind:user="currentUser" />
+				<ul class="overflow-y-auto">
+					<NavigationItem
+						v-for="list in lists"
+						v-on:click="getListItems(list.id)"
+						v-bind:name="list.data.name"
+					/>
 				</ul>
-			</nav>
-			<div class="flex-1 py-6 sm:px-6 lg:px-8">
-				<Table />
+			</div>
+
+			<div class="flex flex-col flex-1 items-end max-w-full">
+				<div class="flex justify-end bg-gray-800 w-full">
+					<CreateItemForm
+						v-bind:user="currentUser"
+						v-bind:listId="state.currentList"
+					/>
+				</div>
+				<Table
+					class="py-6"
+					v-bind:listId="state.currentList"
+					v-bind:user="currentUser"
+					v-bind:rows="currentListItems"
+				/>
 			</div>
 		</main>
 	</div>
