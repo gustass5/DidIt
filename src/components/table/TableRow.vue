@@ -120,25 +120,37 @@ const deleteItem = async () => {
 			<div class="flex -space-x-1 overflow-hidden">
 				<img
 					v-for="user in responsibleUsers"
-					class="inline-block h-6 w-6 rounded-full ring-2 ring-white"
+					class="inline-block h-8 w-8 rounded-full ring-2 ring-white"
 					v-bind:src="getUserImage(user)"
 					v-bind:alt="user"
 				/>
 			</div>
 		</td>
-		<td v-if="!isUserResponsible" class="px-4 text-sm sm:px-6">
+		<td
+			v-if="!isUserResponsible"
+			class="hover:text-blue-500 text-right px-4 text-sm sm:px-6"
+		>
 			<button v-on:click="becomeResponsible">Become responsible</button>
 		</td>
-		<td v-else class="px-4 text-sm sm:px-6">
-			<label>Mark as done: <input v-model="isChecked" type="checkbox" /></label
-			><button v-on:click="cancelResponsibility">| Leave</button>
-		</td>
-		<td>
-			<XIcon
+		<td v-else class="text-right px-4 text-sm sm:px-6 space-x-3">
+			<label class="hover:text-green-500 cursor-pointer space-x-2">
+				<input class="cursor-pointer" v-model="isChecked" type="checkbox" />
+				<span>Mark as done</span>
+			</label>
+			<button
+				class="hover:text-red-500 text-medium"
+				v-on:click="cancelResponsibility"
+			>
+				Leave
+			</button>
+			<button
+				class="hover:text-red-900 text-medium m-1 cursor-pointer"
 				v-on:click="deleteItem"
-				class="h-5 w-5 m-1 cursor-pointer hover:text-orange-800"
-			/>
+			>
+				Delete
+			</button>
 		</td>
+
 		<td class="w-[0.1%]" />
 	</tr>
 </template>
