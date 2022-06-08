@@ -7,12 +7,14 @@ import {
 	arrayRemove
 } from 'firebase/firestore';
 import { ref, computed, watch } from 'vue';
+import { onMounted } from 'vue';
 
 const props = defineProps<{
 	listId: string;
 	id: string;
 	data: any;
 	user: any | null;
+	participants: any[];
 	label?: string;
 }>();
 /**
@@ -32,13 +34,28 @@ watch(isChecked, async (newIsChecked, oldIsChecked) => {
 });
 
 const handleCheckbox = async (checked: boolean) => {
-	console.log({ checked });
 	if (checked) {
 		await markAsDone();
 		return;
 	}
 	await becomeResponsible();
 };
+
+const responsibleUsers = computed(() => {
+	if (props.data.responsible === null || props.data.responsible === undefined) {
+		return [];
+	}
+
+	return Object.keys(props.data.responsible).reduce((responsibleUsers, key) => {
+		if (props.data.responsible[key] !== null) {
+			return [...responsibleUsers, { [key]: props.data.responsible[key] }];
+		}
+
+		return responsibleUsers;
+	}, []);
+});
+
+onMounted(() => {});
 
 /**
  * Every items has `responsible` object
@@ -72,6 +89,15 @@ const cancelResponsibility = async () => {
 		[`responsible.${props.user.uid}`]: null
 	});
 };
+
+const getUserImage = (user: any) => {
+	const key = Object.keys(user)[0];
+	const name = props.participants.find(
+		participant => Object.keys(participant)[0] === key
+	);
+	const innitials = name[key].split(' ')[0][0] + name[key].split(' ')[1][0];
+	return `https://avatars.dicebear.com/api/initials/${innitials}.svg`;
+};
 </script>
 
 <template>
@@ -84,24 +110,10 @@ const cancelResponsibility = async () => {
 		<td class="px-4 text-sm sm:px-6 text-gray-900">
 			<div class="flex -space-x-1 overflow-hidden">
 				<img
+					v-for="user in responsibleUsers"
 					class="inline-block h-6 w-6 rounded-full ring-2 ring-white"
-					src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-					alt=""
-				/>
-				<img
-					class="inline-block h-6 w-6 rounded-full ring-2 ring-white"
-					src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-					alt=""
-				/>
-				<img
-					class="inline-block h-6 w-6 rounded-full ring-2 ring-white"
-					src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80"
-					alt=""
-				/>
-				<img
-					class="inline-block h-6 w-6 rounded-full ring-2 ring-white"
-					src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-					alt=""
+					v-bind:src="getUserImage(user)"
+					v-bind:alt="user"
 				/>
 			</div>
 		</td>

@@ -2,7 +2,12 @@
 import TableHeader from './TableHeader.vue';
 import TableRow from './TableRow.vue';
 
-const props = defineProps<{ user: any | null; listId: string; rows: any[] }>();
+const props = defineProps<{
+	user: any | null;
+	listId: string;
+	rows: any[];
+	participants: any[];
+}>();
 </script>
 
 <template>
@@ -15,6 +20,7 @@ const props = defineProps<{ user: any | null; listId: string; rows: any[] }>();
 				v-bind:id="row.id"
 				v-bind:data="row.data"
 				v-bind:user="user"
+				v-bind:participants="props.participants"
 			/>
 		</tbody>
 	</table>

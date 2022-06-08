@@ -15,9 +15,11 @@ import CreateItemForm from '../../components/modal/CreateItemForm.vue';
 const router = useRouter();
 
 const currentUser = ref(null);
-const state = reactive({ name: null, currentList: '' });
+const name = ref(null);
+const currentList = ref('');
 const lists = ref([]);
 const currentListItems = ref([]);
+const participants = ref([]);
 
 const isLoggedIn = ref(false);
 
@@ -28,14 +30,24 @@ onMounted(() => {
 		if (user) {
 			isLoggedIn.value = true;
 			currentUser.value = user;
-			state.name = currentUser.value.displayName;
+			name.value = currentUser.value.displayName;
 			getLists();
 		} else {
 			isLoggedIn.value = false;
 			currentUser.value = null;
-			state.name = null;
+			name.value = null;
 		}
 	});
+});
+
+watch(currentList, (newCurrentList, oldCurrentList) => {
+	if (lists.value.length <= 0) {
+		participants.value = [];
+		return;
+	}
+
+	const findList = lists.value.find(list => list.id === newCurrentList);
+	participants.value = findList === undefined ? [] : findList.data.participants;
 });
 
 const handleSignOut = () => {
@@ -61,7 +73,7 @@ const getLists = () => {
 };
 
 const getListItems = (id: string) => {
-	state.currentList = id;
+	currentList.value = id;
 	const itemsCollection = collection(getFirestore(), `lists/${id}/items`);
 
 	getDocs(itemsCollection)
@@ -89,7 +101,7 @@ const getListItems = (id: string) => {
 				/>
 				<span class="text-2xl text-gray-500 font-semibold">DIDIT</span>
 			</div>
-			<UserMenu v-bind:name="state.name" />
+			<UserMenu v-bind:name="name" />
 		</header>
 
 		<main class="flex flex-1 min-h-0">
@@ -108,14 +120,15 @@ const getListItems = (id: string) => {
 				<div class="flex justify-end bg-gray-800 w-full">
 					<CreateItemForm
 						v-bind:user="currentUser"
-						v-bind:listId="state.currentList"
+						v-bind:listId="currentList"
 					/>
 				</div>
 				<Table
 					class="py-6"
-					v-bind:listId="state.currentList"
+					v-bind:listId="currentList"
 					v-bind:user="currentUser"
 					v-bind:rows="currentListItems"
+					v-bind:participants="participants"
 				/>
 			</div>
 		</main>
