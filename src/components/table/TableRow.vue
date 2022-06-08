@@ -110,7 +110,14 @@ const deleteItem = async () => {
 </script>
 
 <template>
-	<tr key="{id}" class="h-[59px]">
+	<tr
+		key="{id}"
+		v-bind:class="{
+			'h-[59px] transition ease-in-out duration-500': true,
+			'bg-blue-50': isUserResponsible,
+			'bg-green-50': isUserResponsible && isChecked
+		}"
+	>
 		<td class="whitespace-nowrap px-4 text-sm sm:px-6 text-gray-900">
 			<input type="checkbox" />
 		</td>
@@ -120,7 +127,7 @@ const deleteItem = async () => {
 			<div class="flex -space-x-1 overflow-hidden">
 				<img
 					v-for="user in responsibleUsers"
-					class="inline-block h-8 w-8 rounded-full ring-2 ring-white"
+					class="inline-block h-8 w-8 rounded-full"
 					v-bind:src="getUserImage(user)"
 					v-bind:alt="user"
 				/>
@@ -130,11 +137,17 @@ const deleteItem = async () => {
 			v-if="!isUserResponsible"
 			class="hover:text-blue-500 text-right px-4 text-sm sm:px-6"
 		>
-			<button v-on:click="becomeResponsible">Become responsible</button>
+			<button class="pr-20" v-on:click="becomeResponsible">
+				Become responsible
+			</button>
 		</td>
 		<td v-else class="text-right px-4 text-sm sm:px-6 space-x-3">
 			<label class="hover:text-green-500 cursor-pointer space-x-2">
-				<input class="cursor-pointer" v-model="isChecked" type="checkbox" />
+				<input
+					class="cursor-pointer accent-green-500"
+					v-model="isChecked"
+					type="checkbox"
+				/>
 				<span>Mark as done</span>
 			</label>
 			<button
