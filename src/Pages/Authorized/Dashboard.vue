@@ -29,6 +29,7 @@ const lists = ref([]);
 const currentListItems = ref([]);
 const participants = ref([]);
 const subscription = ref(null);
+const listSubscription = ref(null);
 const navigationIndex = ref(0);
 
 const isLoggedIn = ref(false);
@@ -67,19 +68,23 @@ const handleSignOut = () => {
 };
 
 const getLists = () => {
+	if (listSubscription.value !== null) {
+		listSubscription.value();
+	}
+
 	const listsCollection = collection(getFirestore(), 'lists');
-	getDocs(listsCollection)
-		.then(listsSnapshot => {
-			return listsSnapshot.docs.map(list => {
-				return { data: list.data(), id: list.id };
-			});
-		})
-		.then(receivedLists => {
-			lists.value = receivedLists;
-			if (lists.value.length > 0) {
-				getListItems(lists.value[0].id);
-			}
+
+	listSubscription.value = onSnapshot(listsCollection, querySnapshot => {
+		const listsArray = [];
+		querySnapshot.forEach(doc => {
+			listsArray.push({ data: doc.data(), id: doc.id });
 		});
+		lists.value = listsArray;
+		if (lists.value.length > 0) {
+			getListItems(lists.value[0].id);
+			navigationIndex.value = 0;
+		}
+	});
 };
 
 const getListItems = (id: string) => {
@@ -97,7 +102,6 @@ const getListItems = (id: string) => {
 			querySnapshot.forEach(doc => {
 				items.push({ data: doc.data(), id: doc.id });
 			});
-			console.log({ items });
 			currentListItems.value = items;
 		}
 	);
