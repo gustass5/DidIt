@@ -3,7 +3,14 @@ import { onMounted, ref, reactive, watch } from 'vue';
 
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 
-import { getFirestore, collection, getDocs, doc, where } from 'firebase/firestore';
+import {
+	getFirestore,
+	collection,
+	getDocs,
+	doc,
+	where,
+	query
+} from 'firebase/firestore';
 import { useRouter } from 'vue-router';
 import { db } from '../../main';
 import UserMenu from '../../components/UserMenu.vue';
@@ -76,7 +83,7 @@ const getListItems = (id: string) => {
 	currentList.value = id;
 	const itemsCollection = collection(getFirestore(), `lists/${id}/items`);
 
-	getDocs(itemsCollection)
+	getDocs(query(itemsCollection, where('deleted', '==', false)))
 		.then(itemsSnapshot => {
 			return itemsSnapshot.docs.map(item => {
 				return { data: item.data(), id: item.id };

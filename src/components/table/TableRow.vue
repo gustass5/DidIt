@@ -6,6 +6,8 @@ import {
 	arrayUnion,
 	arrayRemove
 } from 'firebase/firestore';
+import { XIcon } from '@heroicons/vue/solid';
+
 import { ref, computed, watch } from 'vue';
 import { onMounted } from 'vue';
 
@@ -98,6 +100,13 @@ const getUserImage = (user: any) => {
 	const innitials = name[key].split(' ')[0][0] + name[key].split(' ')[1][0];
 	return `https://avatars.dicebear.com/api/initials/${innitials}.svg`;
 };
+
+const deleteItem = async () => {
+	const itemRef = doc(getFirestore(), `lists/${props.listId}/items/${props.id}`);
+	await updateDoc(itemRef, {
+		[`deleted`]: true
+	});
+};
 </script>
 
 <template>
@@ -124,5 +133,12 @@ const getUserImage = (user: any) => {
 			<label>Mark as done: <input v-model="isChecked" type="checkbox" /></label
 			><button v-on:click="cancelResponsibility">| Leave</button>
 		</td>
+		<td>
+			<XIcon
+				v-on:click="deleteItem"
+				class="h-5 w-5 m-1 cursor-pointer hover:text-orange-800"
+			/>
+		</td>
+		<th class="w-[0.1%]" />
 	</tr>
 </template>
