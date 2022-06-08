@@ -115,7 +115,7 @@ const deleteItem = async () => {
 			<input type="checkbox" />
 		</td>
 		<td class="px-4 text-sm sm:px-6 text-gray-900">{{ props.data.content }}</td>
-		<td class="px-4 text-sm sm:px-6 text-gray-900">Important</td>
+		<td class="px-4 text-sm sm:px-6 text-gray-900"></td>
 		<td class="px-4 text-sm sm:px-6 text-gray-900">
 			<div class="flex -space-x-1 overflow-hidden">
 				<img
@@ -139,6 +139,6 @@ const deleteItem = async () => {
 				class="h-5 w-5 m-1 cursor-pointer hover:text-orange-800"
 			/>
 		</td>
-		<th class="w-[0.1%]" />
+		<td class="w-[0.1%]" />
 	</tr>
 </template>

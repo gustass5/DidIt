@@ -1,10 +1,13 @@
 <script setup lang="ts">
-defineProps<{ name: string }>();
+const props = defineProps<{ name: string; active: boolean }>();
 </script>
 
 <template>
 	<li
-		className="p-3 m-2 rounded-r-sm text-white cursor-pointer hover:bg-gray-700 border-l-2 border-gray-800 hover:border-orange-500"
+		v-bind:class="{
+			'p-3 m-2 rounded-r-sm text-white cursor-pointer hover:bg-gray-700 border-l-2 border-gray-800 hover:border-orange-500': true,
+			'bg-gray-700 border-orange-500': props.active
+		}"
 	>
 		{{ name }}
 	</li>

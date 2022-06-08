@@ -9,7 +9,8 @@ import {
 	getDocs,
 	doc,
 	where,
-	query
+	query,
+	onSnapshot
 } from 'firebase/firestore';
 import { useRouter } from 'vue-router';
 import { db } from '../../main';
@@ -27,6 +28,8 @@ const currentList = ref('');
 const lists = ref([]);
 const currentListItems = ref([]);
 const participants = ref([]);
+const subscription = ref(null);
+const navigationIndex = ref(0);
 
 const isLoggedIn = ref(false);
 
@@ -81,17 +84,23 @@ const getLists = () => {
 
 const getListItems = (id: string) => {
 	currentList.value = id;
+	if (subscription.value !== null) {
+		subscription.value();
+	}
+
 	const itemsCollection = collection(getFirestore(), `lists/${id}/items`);
 
-	getDocs(query(itemsCollection, where('deleted', '==', false)))
-		.then(itemsSnapshot => {
-			return itemsSnapshot.docs.map(item => {
-				return { data: item.data(), id: item.id };
+	subscription.value = onSnapshot(
+		query(itemsCollection, where('deleted', '==', false)),
+		querySnapshot => {
+			const items = [];
+			querySnapshot.forEach(doc => {
+				items.push({ data: doc.data(), id: doc.id });
 			});
-		})
-		.then(receivedItems => {
-			currentListItems.value = receivedItems;
-		});
+			console.log({ items });
+			currentListItems.value = items;
+		}
+	);
 };
 </script>
 
@@ -116,9 +125,15 @@ const getListItems = (id: string) => {
 				<CreateForm v-bind:user="currentUser" />
 				<ul class="overflow-y-auto">
 					<NavigationItem
-						v-for="list in lists"
-						v-on:click="getListItems(list.id)"
+						v-for="(list, index) in lists"
+						v-on:click="
+							() => {
+								getListItems(list.id);
+								navigationIndex = index;
+							}
+						"
 						v-bind:name="list.data.name"
+						v-bind:active="navigationIndex === index"
 					/>
 				</ul>
 			</div>
