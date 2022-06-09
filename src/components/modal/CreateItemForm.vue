@@ -92,9 +92,12 @@ const onSubmit = async event => {
 			text-white
 			bg-orange-600
 			hover:bg-orange-700
-			p-4
+			px-3
+			py-2
 			m-2
 			rounded-md
+			text-sm
+			font-medium
 			cursor-pointer
 		"
 		v-on:click="setIsOpen(true)"

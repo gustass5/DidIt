@@ -95,6 +95,7 @@ const onSubmit = async event => {
 			text-white text-2xl
 			cursor-pointer
 			rounded-md
+			font-medium
 			p-3
 		"
 		v-on:click="setIsOpen(true)"

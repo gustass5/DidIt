@@ -140,14 +140,25 @@ const deleteItem = async () => {
 		</td>
 		<td
 			v-if="!isUserResponsible"
-			class="hover:text-blue-500 text-right text-orange-600 px-4 text-sm sm:px-6"
+			class="text-right text-orange-600 px-4 text-sm sm:px-6"
 		>
-			<button class="pr-20" v-on:click="becomeResponsible">
+			<button
+				class="hover:text-blue-500 pr-20 font-medium"
+				v-on:click="becomeResponsible"
+			>
 				Become responsible
 			</button>
 		</td>
 		<td v-else class="text-right text-gray-700 px-4 text-sm sm:px-6 space-x-3">
-			<label class="hover:text-green-500 cursor-pointer space-x-2">
+			<label
+				class="
+					hover:text-green-500
+					text-orange-600
+					cursor-pointer
+					space-x-2
+					font-medium
+				"
+			>
 				<input
 					class="cursor-pointer accent-green-500"
 					v-model="isChecked"
@@ -156,13 +167,23 @@ const deleteItem = async () => {
 				<span>Mark as done</span>
 			</label>
 			<button
-				class="hover:text-red-500 text-medium"
+				class="
+					hover:text-red-900
+					text-red-600 text-orange-600 text-medium
+					font-medium
+				"
 				v-on:click="cancelResponsibility"
 			>
 				Leave
 			</button>
 			<button
-				class="hover:text-red-900 text-medium m-1 cursor-pointer"
+				class="
+					hover:text-red-900
+					text-red-600 text-medium
+					font-medium
+					m-1
+					cursor-pointer
+				"
 				v-on:click="deleteItem"
 			>
 				Delete

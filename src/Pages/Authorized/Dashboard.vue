@@ -105,7 +105,16 @@ const getListItems = (id: string) => {
 <template>
 	<div class="flex flex-col h-screen bg-gray-100">
 		<header
-			class="flex items-center justify-between py-4 px-4 sm:px-6 lg:px-8 bg-white"
+			class="
+				flex
+				items-center
+				justify-between
+				py-4
+				px-4
+				sm:px-6
+				lg:px-8
+				bg-gray-800
+			"
 		>
 			<div class="flex items-center space-x-4">
 				<img
@@ -113,7 +122,7 @@ const getListItems = (id: string) => {
 					src="https://tailwindui.com/img/logos/workflow-mark-indigo-500.svg"
 					alt="Workflow"
 				/>
-				<span class="text-2xl text-gray-500 font-semibold">DIDIT</span>
+				<span class="text-2xl text-gray-300 font-semibold">DIDIT</span>
 			</div>
 			<UserMenu v-bind:name="name" />
 		</header>
@@ -137,13 +146,37 @@ const getListItems = (id: string) => {
 			</div>
 
 			<div class="flex flex-col flex-1 items-end max-w-full">
-				<div class="flex justify-end bg-gray-800 w-full">
-					<CreateItemForm
-						v-bind:user="currentUser"
-						v-bind:listId="currentList"
-					/>
+				<div class="flex bg-white w-full">
+					<div
+						className="flex items-center justify-between w-full border-b border-gray-200"
+					>
+						<div className="flex-1 px-4 py-4 sm:space-y-1 sm:px-6 sm:py-5">
+							<h3 className="text-lg font-medium leading-6 text-gray-900">
+								{{ lists[navigationIndex]?.data.name }}
+							</h3>
+							<!-- <p className="text-sm text-gray-500">Description</p> -->
+						</div>
+
+						<div className="flex items-center space-x-3 pr-4">
+							<CreateItemForm
+								v-bind:user="currentUser"
+								v-bind:listId="currentList"
+							/>
+						</div>
+					</div>
 				</div>
-				<div class="flex w-full h-full flex-col bg-white shadow lg:rounded-md">
+
+				<div
+					class="
+						flex
+						w-full
+						h-full
+						flex-col flex-1
+						bg-white
+						shadow
+						lg:rounded-md
+					"
+				>
 					<div class="p-2">
 						<Table
 							class="py-6"
