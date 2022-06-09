@@ -119,30 +119,34 @@ const deleteItem = async () => {
 		<td class="whitespace-nowrap px-4 text-sm sm:px-6 text-gray-900">
 			<input type="checkbox" />
 		</td>
-		<td class="px-4 text-sm sm:px-6 text-gray-900">{{ props.data.content }}</td>
+		<td class="px-4 text-sm sm:px-6 text-gray-700">{{ props.data.content }}</td>
 		<td class="px-4 text-sm sm:px-6 text-gray-900"></td>
 		<td class="px-4 text-sm sm:px-6 text-gray-900">
-			<div class="flex -space-x-1 overflow-hidden">
+			<div class="flex -space-x-1 overflow-hidden p-1">
 				<img
 					v-for="user in responsibleUsers"
-					class="inline-block h-8 w-8 rounded-full"
+					v-bind:class="{
+						'inline-block h-8 w-8 rounded-full ring-1': true,
+						'ring-green-500': Object.values(user)[0],
+						' ring-transparent': !Object.values(user)[0]
+					}"
 					v-bind:src="getUserImage(user)"
-					v-bind:alt="user"
+					alt="userImage"
 				/>
 			</div>
 		</td>
-		<td class="px-4 text-sm sm:px-6 text-gray-900 text-center">
+		<td class="px-4 text-sm sm:px-6 text-gray-700 text-center">
 			{{ props.data.creation_date.split('T')[0] }}
 		</td>
 		<td
 			v-if="!isUserResponsible"
-			class="hover:text-blue-500 text-right px-4 text-sm sm:px-6"
+			class="hover:text-blue-500 text-right text-gray-700 px-4 text-sm sm:px-6"
 		>
 			<button class="pr-20" v-on:click="becomeResponsible">
 				Become responsible
 			</button>
 		</td>
-		<td v-else class="text-right px-4 text-sm sm:px-6 space-x-3">
+		<td v-else class="text-right text-gray-700 px-4 text-sm sm:px-6 space-x-3">
 			<label class="hover:text-green-500 cursor-pointer space-x-2">
 				<input
 					class="cursor-pointer accent-green-500"
