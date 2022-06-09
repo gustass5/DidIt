@@ -133,6 +133,9 @@ const deleteItem = async () => {
 				/>
 			</div>
 		</td>
+		<td class="px-4 text-sm sm:px-6 text-gray-900 text-center">
+			{{ props.data.creation_date.split('T')[0] }}
+		</td>
 		<td
 			v-if="!isUserResponsible"
 			class="hover:text-blue-500 text-right px-4 text-sm sm:px-6"

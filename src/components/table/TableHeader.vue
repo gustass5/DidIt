@@ -75,6 +75,23 @@
 					text-gray-500
 					sm:px-6
 					whitespace-nowrap
+					text-center
+				"
+			>
+				Creation Date
+			</th>
+			<th
+				scope="col"
+				class="
+					px-4
+					py-3
+					text-left text-xs
+					font-medium
+					uppercase
+					tracking-wider
+					text-gray-500
+					sm:px-6
+					whitespace-nowrap
 				"
 			></th>
 			<th class="w-[0.1%]" />
