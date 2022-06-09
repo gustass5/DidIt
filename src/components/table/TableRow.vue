@@ -140,7 +140,7 @@ const deleteItem = async () => {
 		</td>
 		<td
 			v-if="!isUserResponsible"
-			class="hover:text-blue-500 text-right text-gray-700 px-4 text-sm sm:px-6"
+			class="hover:text-blue-500 text-right text-orange-600 px-4 text-sm sm:px-6"
 		>
 			<button class="pr-20" v-on:click="becomeResponsible">
 				Become responsible

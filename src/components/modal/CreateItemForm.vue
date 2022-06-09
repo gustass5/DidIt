@@ -99,6 +99,6 @@ const onSubmit = async event => {
 		"
 		v-on:click="setIsOpen(true)"
 	>
-		Add
+		Add Item
 	</button>
 </template>
