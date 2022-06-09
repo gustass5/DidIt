@@ -27,7 +27,7 @@ const name = ref(null);
 const currentList = ref('');
 const lists = ref([]);
 const currentListItems = ref([]);
-const participants = ref([]);
+const participants = ref(null);
 const subscription = ref(null);
 const listSubscription = ref(null);
 const navigationIndex = ref(0);
@@ -58,7 +58,7 @@ watch(currentList, (newCurrentList, oldCurrentList) => {
 	}
 
 	const findList = lists.value.find(list => list.id === newCurrentList);
-	participants.value = findList === undefined ? [] : findList.data.participants;
+	participants.value = findList === undefined ? null : findList.data.participants;
 });
 
 const getLists = () => {

@@ -6,7 +6,7 @@ const props = defineProps<{
 	user: any | null;
 	listId: string;
 	rows: any[];
-	participants: any[];
+	participants: any | null;
 }>();
 </script>
 

@@ -13,7 +13,7 @@ import { ref, watch, onMounted } from 'vue';
 import { signOut, getAuth } from 'firebase/auth';
 import { useRouter } from 'vue-router';
 
-const props = defineProps<{ name: string | null; auth: any | null }>();
+const props = defineProps<{ name: string | null }>();
 const imageUrl = ref('https://avatars.dicebear.com/api/initials/gb.svg');
 const router = useRouter();
 let auth;

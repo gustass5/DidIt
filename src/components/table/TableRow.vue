@@ -16,7 +16,7 @@ const props = defineProps<{
 	id: string;
 	data: any;
 	user: any | null;
-	participants: any[];
+	participants: any | null;
 	label?: string;
 }>();
 /**
@@ -94,10 +94,8 @@ const cancelResponsibility = async () => {
 
 const getUserImage = (user: any) => {
 	const key = Object.keys(user)[0];
-	const name = props.participants.find(
-		participant => Object.keys(participant)[0] === key
-	);
-	const innitials = name[key].split(' ')[0][0] + name[key].split(' ')[1][0];
+	const name = props.participants[key];
+	const innitials = name.split(' ')[0][0] + name.split(' ')[1][0];
 	return `https://avatars.dicebear.com/api/initials/${innitials}.svg`;
 };
 
