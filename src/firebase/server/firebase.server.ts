@@ -6,6 +6,7 @@ import {
 } from 'firebase-admin/app';
 
 import { getAuth as getServerAuth } from 'firebase-admin/auth';
+import { getFirestore } from 'firebase-admin/firestore';
 
 if (getServerApps().length === 0) {
 	if (!process.env.SERVICE_ACCOUNT) {
@@ -28,5 +29,6 @@ if (getServerApps().length === 0) {
 const auth = getServerAuth(getServerApp());
 
 export const FirebaseServer = {
-	auth
+	auth,
+	database: getFirestore()
 };
