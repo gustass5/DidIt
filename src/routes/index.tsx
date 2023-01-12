@@ -10,6 +10,8 @@ import { ActionFunction, redirect } from '@remix-run/node';
 import { useEffect } from 'react';
 import { useSubmit } from '@remix-run/react';
 import { Session } from '~/sessions';
+import { FirebaseServer } from '~/firebase/server/firebase.server';
+import { UserSchema } from '~/schema/Schema';
 
 export const loader = async () => {
 	return null;
@@ -23,6 +25,18 @@ export const action: ActionFunction = async ({ request }) => {
 	if (idToken === null || typeof idToken !== 'string') {
 		throw new Error('Invalid id token');
 	}
+
+	// Verify id token, error will be thrown if it is not valid
+	const verifiedUser = await FirebaseServer.auth.verifyIdToken(idToken);
+
+	const user = UserSchema.parse({
+		name: verifiedUser.name,
+		email: verifiedUser.email,
+		image: verifiedUser.picture
+	});
+
+	// Set user in the database, user will be created if it does not exist or overwritten if it does
+	await FirebaseServer.database.doc(`users/${verifiedUser.uid}`).set(user);
 
 	return redirect('/dashboard', {
 		headers: {
