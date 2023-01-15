@@ -3,7 +3,7 @@ import { Session } from '~/sessions';
 
 import { FirebaseServer } from '~/firebase/server/firebase.server';
 import { ListSchema } from '~/schema/Schema';
-import { Form, useLoaderData } from '@remix-run/react';
+import { Form, Link, Outlet, useLoaderData } from '@remix-run/react';
 
 export const loader = async ({ request }: LoaderArgs) => {
 	const user = await Session.isUserSessionValid(request);
@@ -12,13 +12,16 @@ export const loader = async ({ request }: LoaderArgs) => {
 		return redirect('/');
 	}
 
-	const snapshot = await FirebaseServer.database.collection('lists').get();
+	const listsSnapshot = await FirebaseServer.database
+		.collection('lists')
+		.where(`participants.${user.uid}`, '!=', null)
+		.get();
 
-	const documents = snapshot.docs.map(doc =>
+	const listsDocuments = listsSnapshot.docs.map(doc =>
 		ListSchema.parse({ id: doc.id, ...doc.data() })
 	);
 
-	return json({ lists: documents });
+	return json({ lists: listsDocuments });
 };
 
 export const action = async ({ request }: ActionArgs) => {
@@ -54,18 +57,24 @@ export default function Dashboard() {
 	const loaderData = useLoaderData<typeof loader>();
 
 	const lists = loaderData.lists.map((list, index) => (
-		<li key={index}>{list.name}</li>
+		<li key={index}>
+			<Link to={`${list.id}`}>{list.name}</Link>
+		</li>
 	));
 
 	return (
 		<>
-			<div>Lists</div>
+			<h1>
+				<Link to="lists">Lists</Link>
+			</h1>
+
 			<ul>{lists}</ul>
 			<hr />
 			<Form method="post">
 				<input name="name" type="text" placeholder="Name" />
 				<button type="submit">Create</button>
 			</Form>
+			<Outlet />
 		</>
 	);
 }

@@ -38,7 +38,7 @@ export const action: ActionFunction = async ({ request }) => {
 	// Set user in the database, user will be created if it does not exist or overwritten if it does
 	await FirebaseServer.database.doc(`users/${verifiedUser.uid}`).set(user);
 
-	return redirect('/dashboard', {
+	return redirect('/lists', {
 		headers: {
 			'Set-Cookie': await Session.setUserSession(idToken, request)
 		}
