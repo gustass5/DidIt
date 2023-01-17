@@ -1,6 +1,8 @@
 import { createCookieSessionStorage } from '@remix-run/node';
 import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';
+import { z } from 'zod';
 import { FirebaseServer } from './firebase/server/firebase.server';
+import { UserSchema } from './schema/Schema';
 
 const USER_SESSION_KEY = 'userToken';
 
@@ -41,11 +43,20 @@ const setUserSession = async (idToken: string, request: Request) => {
 /**
  * @returns If user session is valid, returns user data, otherwise null.
  */
-const isUserSessionValid = async (request: Request): Promise<DecodedIdToken | null> => {
+const isUserSessionValid = async (
+	request: Request
+): Promise<z.infer<typeof UserSchema> | null> => {
 	const token = await getUserToken(request);
 
 	try {
-		const user = await FirebaseServer.auth.verifySessionCookie(token, true);
+		const verifiedUser = await FirebaseServer.auth.verifySessionCookie(token, true);
+
+		const user = UserSchema.parse({
+			id: verifiedUser.uid,
+			name: verifiedUser.name,
+			email: verifiedUser.email,
+			image: verifiedUser.picture
+		});
 
 		return user;
 	} catch (error: any) {

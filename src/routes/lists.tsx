@@ -14,7 +14,7 @@ export const loader = async ({ request }: LoaderArgs) => {
 
 	const listsSnapshot = await FirebaseServer.database
 		.collection('lists')
-		.where(`participants.${user.uid}`, '!=', null)
+		.where(`participants.${user.id}`, '!=', null)
 		.get();
 
 	const listsDocuments = listsSnapshot.docs.map(doc =>
@@ -39,10 +39,10 @@ export const action = async ({ request }: ActionArgs) => {
 
 	const newList = ListSchema.parse({
 		name,
-		author_id: user.uid,
+		author_id: user.id,
 		deleted: false,
 		participants: {
-			[user.uid]: { name: user.name, email: user.email, image: user.picture }
+			[user.id]: { name: user.name, email: user.email, image: user.image }
 		},
 		created_at: currentTimestamp,
 		updated_at: currentTimestamp

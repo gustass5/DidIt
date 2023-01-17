@@ -30,6 +30,7 @@ export const action: ActionFunction = async ({ request }) => {
 	const verifiedUser = await FirebaseServer.auth.verifyIdToken(idToken);
 
 	const user = UserSchema.parse({
+		id: verifiedUser.uid,
 		name: verifiedUser.name,
 		email: verifiedUser.email,
 		image: verifiedUser.picture
