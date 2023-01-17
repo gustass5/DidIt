@@ -1,6 +1,10 @@
 import { json, LoaderArgs, redirect, ActionArgs } from '@remix-run/node';
-import { Form, useLoaderData } from '@remix-run/react';
+import { Form, useFetcher, useLoaderData } from '@remix-run/react';
+import { z } from 'zod';
 import { FirebaseServer } from '~/firebase/server/firebase.server';
+import { createTask } from '~/handlers/task/createTask';
+import { toggleComplete } from '~/handlers/task/toggleComplete';
+import { toggleResponsible } from '~/handlers/task/toggleResponsible';
 import { ListSchema, TaskSchema } from '~/schema/Schema';
 import { Session } from '~/sessions';
 
@@ -27,7 +31,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 
 	const listData = ListSchema.parse(await listSnapshot.data());
 
-	if (!(user.uid in listData.participants)) {
+	if (!(user.id in listData.participants)) {
 		throw new Error('List is not accessible');
 	}
 
@@ -37,8 +41,13 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 		TaskSchema.parse({ id: doc.id, ...doc.data() })
 	);
 
-	return json({ tasks: tasksDocuments });
+	return json({ tasks: tasksDocuments, user });
 };
+
+const TaskActionSchema = z.union(
+	[z.literal('create'), z.literal('responsible'), z.literal('complete')],
+	{ invalid_type_error: 'Invalid action type' }
+);
 
 export const action = async ({ request, params }: ActionArgs) => {
 	const user = await Session.isUserSessionValid(request);
@@ -49,23 +58,8 @@ export const action = async ({ request, params }: ActionArgs) => {
 
 	const formData = await request.formData();
 
-	const name = formData.get('name');
-
-	const labels = formData.get('labels');
-
-	const currentTimestamp = new Date().toISOString();
-
-	const newTask = TaskSchema.parse({
-		name,
-		author_id: user.uid,
-		responsible: {
-			[user.uid]: { name: user.name, email: user.email, image: user.picture }
-		},
-		completed: {},
-		labels,
-		created_at: currentTimestamp,
-		updated_at: currentTimestamp
-	});
+	// Get action type
+	const action = TaskActionSchema.parse(formData.get('action'));
 
 	const listId = params.id;
 
@@ -73,6 +67,7 @@ export const action = async ({ request, params }: ActionArgs) => {
 		throw new Error('List id is invalid');
 	}
 
+	// Get and check if list that task belongs to is available to the user
 	const listsReference = await FirebaseServer.database.collection('lists');
 
 	const listSnapshot = await listsReference.doc(listId).get();
@@ -83,11 +78,43 @@ export const action = async ({ request, params }: ActionArgs) => {
 
 	const listData = ListSchema.parse(await listSnapshot.data());
 
-	if (!(user.uid in listData.participants)) {
+	if (!(user.id in listData.participants)) {
 		throw new Error('List is not accessible');
 	}
 
-	await listSnapshot.ref.collection('tasks').add(newTask);
+	if (action === 'create') {
+		await createTask(listSnapshot, formData, user);
+
+		return null;
+	}
+
+	// If action was not to create a new task, check if task id was provided
+	const taskId = formData.get('taskId');
+
+	if (taskId === null) {
+		throw new Error('No task id provided');
+	}
+
+	if (typeof taskId !== 'string') {
+		throw new Error('Task id is invalid');
+	}
+
+	// Get task snapshot so changes can be made to it
+	const taskSnapshot = await listSnapshot.ref.collection('tasks').doc(taskId).get();
+
+	if (!taskSnapshot.exists) {
+		throw new Error('Task does not exist');
+	}
+
+	if (action === 'responsible') {
+		await toggleResponsible(taskSnapshot, user);
+
+		return null;
+	}
+
+	if (action === 'complete') {
+		await toggleComplete(taskSnapshot, user);
+	}
 
 	return null;
 };
@@ -95,8 +122,30 @@ export const action = async ({ request, params }: ActionArgs) => {
 export default function ListPage() {
 	const loaderData = useLoaderData<typeof loader>();
 
+	const responsibleFetcher = useFetcher();
+	const completeFetcher = useFetcher();
+
 	const tasks = loaderData.tasks.map((task, index) => (
-		<li key={index}>{task.name}</li>
+		<li key={index} className="flex space-between">
+			<span>{task.name}</span>
+			<responsibleFetcher.Form method="post">
+				<input name="taskId" type="hidden" value={task.id} />
+				<button name="action" type="submit" value="responsible">
+					{task.responsible[loaderData.user.id] ? 'JOINED' : 'JOIN'}
+				</button>
+			</responsibleFetcher.Form>
+			<completeFetcher.Form method="post">
+				<input name="taskId" type="hidden" value={task.id} />
+				<button
+					name="action"
+					type="submit"
+					value="complete"
+					disabled={!task.responsible[loaderData.user.id]}
+				>
+					{task.completed[loaderData.user.id] ? 'COMPLETED' : 'COMPLETE'}
+				</button>
+			</completeFetcher.Form>
+		</li>
 	));
 
 	return (
@@ -108,7 +157,9 @@ export default function ListPage() {
 			<Form method="post">
 				<input name="name" type="text" placeholder="Name" />
 				<input name="labels" type="text" placeholder="Label(s)" />
-				<button type="submit">Create</button>
+				<button name="action" type="submit" value="create">
+					Create
+				</button>
 			</Form>
 		</div>
 	);
