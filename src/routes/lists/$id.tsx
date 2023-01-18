@@ -199,10 +199,8 @@ export default function ListPage() {
 				<div className="fixed inset-0 bg-black/30" aria-hidden="true" />
 				<div className="fixed inset-0 flex items-center justify-center p-4">
 					<Dialog.Panel className="w-full max-w-sm rounded bg-white">
-						<Dialog.Title>Deactivate account</Dialog.Title>
-						<Dialog.Description>
-							This will permanently deactivate your account
-						</Dialog.Description>
+						<Dialog.Title>Update task</Dialog.Title>
+						<Dialog.Description>This will update task</Dialog.Description>
 
 						<updateFetcher.Form method="post">
 							<input

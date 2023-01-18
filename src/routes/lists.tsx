@@ -1,9 +1,16 @@
+import { Dialog } from '@headlessui/react';
+
 import { redirect, LoaderArgs, json, ActionArgs } from '@remix-run/node';
 import { Session } from '~/sessions';
 
 import { FirebaseServer } from '~/firebase/server/firebase.server';
 import { ListSchema } from '~/schema/Schema';
-import { Form, Link, Outlet, useLoaderData } from '@remix-run/react';
+import { Form, Link, Outlet, useFetcher, useLoaderData } from '@remix-run/react';
+
+import { useState } from 'react';
+import { z } from 'zod';
+import { createList } from '~/handlers/list/createList';
+import { updateList } from '~/handlers/list/updateList';
 
 export const loader = async ({ request }: LoaderArgs) => {
 	const user = await Session.isUserSessionValid(request);
@@ -24,6 +31,10 @@ export const loader = async ({ request }: LoaderArgs) => {
 	return json({ lists: listsDocuments });
 };
 
+const ListActionSchema = z.union([z.literal('create'), z.literal('update')], {
+	invalid_type_error: 'Invalid action type'
+});
+
 export const action = async ({ request }: ActionArgs) => {
 	const user = await Session.isUserSessionValid(request);
 
@@ -33,22 +44,14 @@ export const action = async ({ request }: ActionArgs) => {
 
 	const formData = await request.formData();
 
-	const name = formData.get('name');
+	// Get action type
+	const action = ListActionSchema.parse(formData.get('action'));
 
-	const currentTimestamp = new Date().toISOString();
-
-	const newList = ListSchema.parse({
-		name,
-		author_id: user.id,
-		deleted: false,
-		participants: {
-			[user.id]: { name: user.name, email: user.email, image: user.image }
-		},
-		created_at: currentTimestamp,
-		updated_at: currentTimestamp
-	});
-
-	await FirebaseServer.database.collection('lists').add(newList);
+	if (action === 'create') {
+		await createList(formData, user);
+	} else {
+		await updateList(formData, user);
+	}
 
 	return null;
 };
@@ -56,9 +59,25 @@ export const action = async ({ request }: ActionArgs) => {
 export default function Dashboard() {
 	const loaderData = useLoaderData<typeof loader>();
 
+	const updateFetcher = useFetcher();
+
+	const [isOpen, setIsOpen] = useState(false);
+
+	const [listToUpdate, setListToUpdate] = useState<z.infer<typeof ListSchema> | null>(
+		null
+	);
+
 	const lists = loaderData.lists.map((list, index) => (
 		<li key={index}>
 			<Link to={`${list.id}`}>{list.name}</Link>
+			<button
+				onClick={() => {
+					setListToUpdate(list);
+					setIsOpen(true);
+				}}
+			>
+				UPDATE
+			</button>
 		</li>
 	));
 
@@ -72,8 +91,43 @@ export default function Dashboard() {
 			<hr />
 			<Form method="post">
 				<input name="name" type="text" placeholder="Name" />
-				<button type="submit">Create</button>
+				<button name="action" type="submit" value="create">
+					Create
+				</button>
 			</Form>
+
+			<Dialog
+				open={isOpen}
+				onClose={() => setIsOpen(false)}
+				className="relative z-50"
+			>
+				<div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+				<div className="fixed inset-0 flex items-center justify-center p-4">
+					<Dialog.Panel className="w-full max-w-sm rounded bg-white">
+						<Dialog.Title>Update list name</Dialog.Title>
+						<Dialog.Description>
+							This will update list name
+						</Dialog.Description>
+
+						<updateFetcher.Form method="post">
+							<input
+								name="listId"
+								type="hidden"
+								value={listToUpdate?.id}
+							/>
+							<input
+								name="name"
+								type="text"
+								placeholder="Name"
+								defaultValue={listToUpdate?.name}
+							/>
+							<button name="action" type="submit" value="update">
+								Update
+							</button>
+						</updateFetcher.Form>
+					</Dialog.Panel>
+				</div>
+			</Dialog>
 			<Outlet />
 		</>
 	);
