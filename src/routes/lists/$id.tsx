@@ -1,10 +1,13 @@
+import { Dialog } from '@headlessui/react';
 import { json, LoaderArgs, redirect, ActionArgs } from '@remix-run/node';
 import { Form, useFetcher, useLoaderData } from '@remix-run/react';
+import { useState } from 'react';
 import { z } from 'zod';
 import { FirebaseServer } from '~/firebase/server/firebase.server';
 import { createTask } from '~/handlers/task/createTask';
 import { toggleComplete } from '~/handlers/task/toggleComplete';
 import { toggleResponsible } from '~/handlers/task/toggleResponsible';
+import { updateTask } from '~/handlers/task/updateTask';
 import { ListSchema, TaskSchema } from '~/schema/Schema';
 import { Session } from '~/sessions';
 
@@ -45,7 +48,12 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 };
 
 const TaskActionSchema = z.union(
-	[z.literal('create'), z.literal('responsible'), z.literal('complete')],
+	[
+		z.literal('create'),
+		z.literal('update'),
+		z.literal('responsible'),
+		z.literal('complete')
+	],
 	{ invalid_type_error: 'Invalid action type' }
 );
 
@@ -106,6 +114,12 @@ export const action = async ({ request, params }: ActionArgs) => {
 		throw new Error('Task does not exist');
 	}
 
+	if (action === 'update') {
+		await updateTask(taskSnapshot, formData, user);
+
+		return null;
+	}
+
 	if (action === 'responsible') {
 		await toggleResponsible(taskSnapshot, user);
 
@@ -124,6 +138,13 @@ export default function ListPage() {
 
 	const responsibleFetcher = useFetcher();
 	const completeFetcher = useFetcher();
+	const updateFetcher = useFetcher();
+
+	const [isOpen, setIsOpen] = useState(false);
+
+	const [taskToUpdate, setTaskToUpdate] = useState<z.infer<typeof TaskSchema> | null>(
+		null
+	);
 
 	const tasks = loaderData.tasks.map((task, index) => (
 		<li key={index} className="flex space-between">
@@ -145,6 +166,14 @@ export default function ListPage() {
 					{task.completed[loaderData.user.id] ? 'COMPLETED' : 'COMPLETE'}
 				</button>
 			</completeFetcher.Form>
+			<button
+				onClick={() => {
+					setTaskToUpdate(task);
+					setIsOpen(true);
+				}}
+			>
+				UPDATE
+			</button>
 		</li>
 	));
 
@@ -161,6 +190,45 @@ export default function ListPage() {
 					Create
 				</button>
 			</Form>
+
+			<Dialog
+				open={isOpen}
+				onClose={() => setIsOpen(false)}
+				className="relative z-50"
+			>
+				<div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+				<div className="fixed inset-0 flex items-center justify-center p-4">
+					<Dialog.Panel className="w-full max-w-sm rounded bg-white">
+						<Dialog.Title>Deactivate account</Dialog.Title>
+						<Dialog.Description>
+							This will permanently deactivate your account
+						</Dialog.Description>
+
+						<updateFetcher.Form method="post">
+							<input
+								name="taskId"
+								type="hidden"
+								value={taskToUpdate?.id}
+							/>
+							<input
+								name="name"
+								type="text"
+								placeholder="Name"
+								defaultValue={taskToUpdate?.name}
+							/>
+							<input
+								name="labels"
+								type="text"
+								placeholder="Label(s)"
+								defaultValue={taskToUpdate?.labels}
+							/>
+							<button name="action" type="submit" value="update">
+								Update
+							</button>
+						</updateFetcher.Form>
+					</Dialog.Panel>
+				</div>
+			</Dialog>
 		</div>
 	);
 }
