@@ -16,6 +16,7 @@ export const createList = async (
 		deleted: false,
 		participants: {
 			[user.id]: {
+				id: user.id,
 				name: user.name,
 				email: user.email,
 				image: user.image
