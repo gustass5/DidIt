@@ -14,24 +14,24 @@ export const toggleComplete = async (
 	}
 
 	if (taskData.completed[user.id] === undefined) {
-		const newTaskData = {
+		const newTaskData = TaskSchema.parse({
 			...taskData,
 			completed: {
 				...taskData.completed,
 				[user.id]: true
 			}
-		};
+		});
 
 		await taskSnapshot.ref.set(newTaskData);
 	} else {
 		const { [user.id]: current, ...rest } = taskData.completed;
 
-		const newTaskData = {
+		const newTaskData = TaskSchema.parse({
 			...taskData,
 			completed: {
 				...rest
 			}
-		};
+		});
 
 		await taskSnapshot.ref.set(newTaskData);
 	}
