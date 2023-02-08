@@ -10,6 +10,7 @@ import { toggleResponsible } from '~/handlers/task/toggleResponsible';
 import { updateTask } from '~/handlers/task/updateTask';
 import { ListSchema, TaskSchema } from '~/schema/Schema';
 import { Session } from '~/sessions';
+import { UserInvitationWidget } from '~/widgets/UserInvitationWidet';
 
 export const loader = async ({ request, params }: LoaderArgs) => {
 	const user = await Session.isUserSessionValid(request);
@@ -44,7 +45,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 		TaskSchema.parse({ id: doc.id, ...doc.data() })
 	);
 
-	return json({ tasks: tasksDocuments, user });
+	return json({ listId, listName: listData.name, tasks: tasksDocuments, user });
 };
 
 const TaskActionSchema = z.union(
@@ -128,6 +129,8 @@ export const action = async ({ request, params }: ActionArgs) => {
 
 	if (action === 'complete') {
 		await toggleComplete(taskSnapshot, user);
+
+		return null;
 	}
 
 	return null;
@@ -227,6 +230,10 @@ export default function ListPage() {
 					</Dialog.Panel>
 				</div>
 			</Dialog>
+			<UserInvitationWidget
+				listId={loaderData.listId}
+				listName={loaderData.listName}
+			/>
 		</div>
 	);
 }

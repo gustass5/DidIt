@@ -4,13 +4,14 @@ import { redirect, LoaderArgs, json, ActionArgs } from '@remix-run/node';
 import { Session } from '~/sessions';
 
 import { FirebaseServer } from '~/firebase/server/firebase.server';
-import { ListSchema } from '~/schema/Schema';
+import { InvitationSchema, ListSchema, UserSchema } from '~/schema/Schema';
 import { Form, Link, Outlet, useFetcher, useLoaderData } from '@remix-run/react';
 
 import { useState } from 'react';
 import { z } from 'zod';
 import { createList } from '~/handlers/list/createList';
 import { updateList } from '~/handlers/list/updateList';
+import { inviteUsers } from '~/handlers/list/inviteUsers';
 
 export const loader = async ({ request }: LoaderArgs) => {
 	const user = await Session.isUserSessionValid(request);
@@ -31,9 +32,12 @@ export const loader = async ({ request }: LoaderArgs) => {
 	return json({ lists: listsDocuments });
 };
 
-const ListActionSchema = z.union([z.literal('create'), z.literal('update')], {
-	invalid_type_error: 'Invalid action type'
-});
+const ListActionSchema = z.union(
+	[z.literal('create'), z.literal('update'), z.literal('invite')],
+	{
+		invalid_type_error: 'Invalid action type'
+	}
+);
 
 export const action = async ({ request }: ActionArgs) => {
 	const user = await Session.isUserSessionValid(request);
@@ -46,11 +50,22 @@ export const action = async ({ request }: ActionArgs) => {
 
 	// Get action type
 	const action = ListActionSchema.parse(formData.get('action'));
-
 	if (action === 'create') {
 		await createList(formData, user);
-	} else {
+
+		return null;
+	}
+
+	if (action === 'update') {
 		await updateList(formData, user);
+
+		return null;
+	}
+
+	if (action === 'invite') {
+		await inviteUsers(formData, user);
+
+		return null;
 	}
 
 	return null;
