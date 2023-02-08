@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { FirebaseServer } from '~/firebase/server/firebase.server';
+import { getListId } from '~/helpers/getListId';
 import { ListSchema, UserSchema } from '~/schema/Schema';
 
 export const updateList = async (
@@ -10,16 +11,7 @@ export const updateList = async (
 
 	const currentTimestamp = new Date().toISOString();
 
-	const listId = formData.get('listId');
-
-	if (listId === null) {
-		throw new Error('No list id provided');
-	}
-
-	if (typeof listId !== 'string') {
-		throw new Error('List id is invalid');
-	}
-
+	const listId = getListId(formData);
 	// Get task snapshot so changes can be made to it
 	const listsSnapshot = await FirebaseServer.database
 		.collection('lists')
