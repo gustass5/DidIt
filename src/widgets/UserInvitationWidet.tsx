@@ -104,7 +104,7 @@ export const UserInvitationWidget: React.FC<{ listId: string; listName: string }
 				)
 			)
 		);
-	}, [query]);
+	}, [query, users, invitations]);
 
 	return (
 		<>
