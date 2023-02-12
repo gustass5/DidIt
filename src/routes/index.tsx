@@ -5,7 +5,7 @@ import {
 } from 'firebase/auth';
 import { FirebaseClient } from '~/firebase/client/firebase.client';
 
-import { ActionFunction, redirect } from '@remix-run/node';
+import { ActionFunction, redirect, LoaderArgs } from '@remix-run/node';
 
 import { useEffect } from 'react';
 import { useSubmit } from '@remix-run/react';
@@ -13,7 +13,13 @@ import { Session } from '~/sessions';
 import { FirebaseServer } from '~/firebase/server/firebase.server';
 import { UserSchema } from '~/schema/Schema';
 
-export const loader = async () => {
+export const loader = async ({ request }: LoaderArgs) => {
+	const user = await Session.isUserSessionValid(request);
+
+	if (user) {
+		return redirect('/lists');
+	}
+
 	return null;
 };
 
