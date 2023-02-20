@@ -28,11 +28,19 @@ export const TaskSchema = z.object({
 	updated_at: z.string()
 });
 
+export const InvitationStatusEnum = z.enum([
+	'pending',
+	'accepted',
+	'declined',
+	'withdrawn'
+]);
+
 export const InvitationSchema = z.object({
 	id: z.optional(z.string()),
-	list: z.record(z.string(), z.string()),
+	list: z.object({ id: z.string(), name: z.string() }),
 	inviter: UserSchema,
 	invited: UserSchema,
+	status: InvitationStatusEnum,
 	created_at: z.string(),
 	updated_at: z.string()
 });

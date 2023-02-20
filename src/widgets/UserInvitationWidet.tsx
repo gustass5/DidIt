@@ -2,7 +2,7 @@ import { Combobox, Dialog } from '@headlessui/react';
 import { useFetcher } from '@remix-run/react';
 import { useState, useEffect } from 'react';
 import { z } from 'zod';
-import { InvitationSchema, UserSchema } from '~/schema/Schema';
+import { InvitationSchema, InvitationStatusEnum, UserSchema } from '~/schema/Schema';
 
 type ComboboxUserType = (z.infer<typeof UserSchema> & { invited: boolean })[];
 
@@ -37,7 +37,11 @@ export const UserInvitationWidget: React.FC<{ listId: string; listName: string }
 
 		usersFetcher.submit({}, { method: 'post', action: '/api/users' });
 		invitationsFetcher.submit(
-			{ listId },
+			{
+				listId,
+				'status[0]': InvitationStatusEnum.enum.accepted,
+				'status[1]': InvitationStatusEnum.enum.pending
+			},
 			{ method: 'post', action: '/api/invitations' }
 		);
 	}, [isOpen]);
@@ -131,7 +135,7 @@ export const UserInvitationWidget: React.FC<{ listId: string; listName: string }
 									console.log('selected', selectedUsers);
 									setSelectedUsers(users);
 								}}
-								name="invitees"
+								name="invited"
 								multiple
 							>
 								<div className="relative mt-1">

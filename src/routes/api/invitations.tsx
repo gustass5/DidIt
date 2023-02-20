@@ -1,8 +1,9 @@
 import { ActionArgs } from '@remix-run/node';
-import { FirebaseServer } from '~/firebase/server/firebase.server';
-import { InvitationSchema } from '~/schema/Schema';
+import { InvitationStatusEnum } from '~/schema/Schema';
 import { Session } from '~/sessions';
 import { getListId } from '~/helpers/getListId';
+import { getInvitations } from '~/handlers/invitation/getInvitations';
+import qs from 'qs';
 
 /**
  * API route to get invitations for specific list
@@ -18,14 +19,13 @@ export const action = async ({ request }: ActionArgs) => {
 
 	const listId = getListId(formData);
 
-	const invitationsSnapshot = await FirebaseServer.database
-		.collection('invitations')
-		.where(`list.${listId}`, '!=', null)
-		.get();
+	const stringifiedFormData = qs.stringify(Object.fromEntries(formData.entries()));
 
-	const invitationsDocuments = invitationsSnapshot.docs.map(doc =>
-		InvitationSchema.parse(doc.data())
-	);
+	const formDataEntries = qs.parse(stringifiedFormData);
 
-	return { invitations: invitationsDocuments };
+	const status = InvitationStatusEnum.array().parse(formDataEntries['status']);
+
+	const invitations = await getInvitations(listId, status);
+
+	return { invitations };
 };
