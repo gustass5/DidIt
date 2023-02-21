@@ -13,7 +13,10 @@ export const action = async ({ request }: ActionArgs) => {
 		throw new Error('Not authorized');
 	}
 
-	const usersSnapshot = await FirebaseServer.database.collection('users').get();
+	const usersSnapshot = await FirebaseServer.database
+		.collection('users')
+		.where('id', '!=', user.id)
+		.get();
 
 	const usersDocuments = usersSnapshot.docs.map(doc => UserSchema.parse(doc.data()));
 

@@ -12,6 +12,7 @@ import { z } from 'zod';
 import { createList } from '~/handlers/list/createList';
 import { updateList } from '~/handlers/list/updateList';
 import { inviteUsers } from '~/handlers/list/inviteUsers';
+import { NotificationWidget } from '~/widgets/NotificationWidget';
 
 export const loader = async ({ request }: LoaderArgs) => {
 	const user = await Session.isUserSessionValid(request);
@@ -29,7 +30,7 @@ export const loader = async ({ request }: LoaderArgs) => {
 		ListSchema.parse({ id: doc.id, ...doc.data() })
 	);
 
-	return json({ lists: listsDocuments });
+	return json({ lists: listsDocuments, user });
 };
 
 const ListActionSchema = z.union(
@@ -144,6 +145,7 @@ export default function Dashboard() {
 				</div>
 			</Dialog>
 			<Outlet />
+			<NotificationWidget user={loaderData.user} />
 		</>
 	);
 }

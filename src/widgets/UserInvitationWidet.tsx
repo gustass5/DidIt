@@ -42,7 +42,7 @@ export const UserInvitationWidget: React.FC<{ listId: string; listName: string }
 				'status[0]': InvitationStatusEnum.enum.accepted,
 				'status[1]': InvitationStatusEnum.enum.pending
 			},
-			{ method: 'post', action: '/api/invitations' }
+			{ method: 'post', action: '/api/invitations/list' }
 		);
 	}, [isOpen]);
 

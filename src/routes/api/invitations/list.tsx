@@ -25,7 +25,7 @@ export const action = async ({ request }: ActionArgs) => {
 
 	const status = InvitationStatusEnum.array().parse(formDataEntries['status']);
 
-	const invitations = await getInvitations(listId, status);
+	const invitations = await getInvitations({ listId, status });
 
 	return { invitations };
 };

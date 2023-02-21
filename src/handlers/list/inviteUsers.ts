@@ -5,8 +5,6 @@ import { getListId } from '~/helpers/getListId';
 import { InvitationSchema, InvitationStatusEnum, UserSchema } from '~/schema/Schema';
 import { getInvitations } from '../invitation/getInvitations';
 
-const getKey = (index: number, key: string) => `invitees[${index}][${key}]`;
-
 export const inviteUsers = async (
 	formData: FormData,
 	user: z.infer<typeof UserSchema>
@@ -25,16 +23,20 @@ export const inviteUsers = async (
 
 	const invitedIds = parsedInvitedData.map(invited => invited.id);
 
-	const filteredIds = Array.from(new Set(invitedIds));
+	// Filter duplicate ids and disallow user to invite himself
+	const filteredIds = Array.from(new Set(invitedIds)).filter(
+		invitedId => invitedId !== user.id
+	);
 
 	const filteredInvited = UserSchema.array().parse(
 		filteredIds.map(id => parsedInvitedData.find(invited => invited.id === id))
 	);
 
-	const invitations = await getInvitations(listId, [
-		InvitationStatusEnum.enum.pending,
-		InvitationStatusEnum.enum.accepted
-	]);
+	const invitations = await getInvitations({
+		listId,
+		status: [InvitationStatusEnum.enum.pending, InvitationStatusEnum.enum.accepted]
+	});
+
 	const invited = filteredInvited.filter(
 		invited =>
 			invitations.find(invitation => invitation.invited.id === invited.id) ===
