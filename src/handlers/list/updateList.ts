@@ -19,7 +19,7 @@ export const updateList = async (
 		.get();
 
 	if (!listsSnapshot.exists) {
-		throw new Error('Task does not exist');
+		throw new Error('List does not exist');
 	}
 
 	const listData = ListSchema.parse(listsSnapshot.data());

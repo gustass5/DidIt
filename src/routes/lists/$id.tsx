@@ -33,7 +33,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 		throw new Error('List does not exist');
 	}
 
-	const listData = ListSchema.parse(await listSnapshot.data());
+	const listData = ListSchema.parse({ id: listId, ...listSnapshot.data() });
 
 	if (!(user.id in listData.participants)) {
 		throw new Error('List is not accessible');
@@ -45,7 +45,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 		TaskSchema.parse({ id: doc.id, ...doc.data() })
 	);
 
-	return json({ listId, listName: listData.name, tasks: tasksDocuments, user });
+	return json({ listData, tasks: tasksDocuments, user });
 };
 
 const TaskActionSchema = z.union(
@@ -230,10 +230,7 @@ export default function ListPage() {
 					</Dialog.Panel>
 				</div>
 			</Dialog>
-			<UserInvitationWidget
-				listId={loaderData.listId}
-				listName={loaderData.listName}
-			/>
+			<UserInvitationWidget listData={loaderData.listData} />
 		</div>
 	);
 }

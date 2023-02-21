@@ -4,7 +4,7 @@ import { redirect, LoaderArgs, json, ActionArgs } from '@remix-run/node';
 import { Session } from '~/sessions';
 
 import { FirebaseServer } from '~/firebase/server/firebase.server';
-import { InvitationSchema, ListSchema, UserSchema } from '~/schema/Schema';
+import { ListSchema } from '~/schema/Schema';
 import { Form, Link, Outlet, useFetcher, useLoaderData } from '@remix-run/react';
 
 import { useState } from 'react';

@@ -2,14 +2,21 @@ import { Combobox, Dialog } from '@headlessui/react';
 import { useFetcher } from '@remix-run/react';
 import { useState, useEffect } from 'react';
 import { z } from 'zod';
-import { InvitationSchema, InvitationStatusEnum, UserSchema } from '~/schema/Schema';
+import {
+	InvitationSchema,
+	InvitationStatusEnum,
+	ListSchema,
+	UserSchema
+} from '~/schema/Schema';
 
-type ComboboxUserType = (z.infer<typeof UserSchema> & { invited: boolean })[];
+type ComboboxUserType = (z.infer<typeof UserSchema> & {
+	invited: boolean;
+	participant: boolean;
+})[];
 
-export const UserInvitationWidget: React.FC<{ listId: string; listName: string }> = ({
-	listId,
-	listName
-}) => {
+export const UserInvitationWidget: React.FC<{
+	listData: z.infer<typeof ListSchema>;
+}> = ({ listData }) => {
 	const [isOpen, setIsOpen] = useState(false);
 
 	const [users, setUsers] = useState<z.infer<typeof UserSchema>[]>([]);
@@ -38,9 +45,8 @@ export const UserInvitationWidget: React.FC<{ listId: string; listName: string }
 		usersFetcher.submit({}, { method: 'post', action: '/api/users' });
 		invitationsFetcher.submit(
 			{
-				listId,
-				'status[0]': InvitationStatusEnum.enum.accepted,
-				'status[1]': InvitationStatusEnum.enum.pending
+				listId: listData.id || '',
+				'status[0]': InvitationStatusEnum.enum.pending
 			},
 			{ method: 'post', action: '/api/invitations/list' }
 		);
@@ -85,7 +91,8 @@ export const UserInvitationWidget: React.FC<{ listId: string; listName: string }
 				invited:
 					invitations.find(
 						invitation => invitation.invited.id === user.id
-					) !== undefined
+					) !== undefined,
+				participant: listData.participants[user.id] !== undefined
 			}));
 
 		if (query === '') {
@@ -127,8 +134,12 @@ export const UserInvitationWidget: React.FC<{ listId: string; listName: string }
 						</Dialog.Description>
 
 						<inviteUserFetcher.Form method="post" action="/lists">
-							<input name="listId" type="hidden" value={listId} />
-							<input name="listName" type="hidden" value={listName} />
+							<input name="listId" type="hidden" value={listData.id} />
+							<input
+								name="listName"
+								type="hidden"
+								value={listData.name}
+							/>
 							<Combobox
 								value={selectedUsers}
 								onChange={users => {
@@ -200,8 +211,11 @@ export const UserInvitationWidget: React.FC<{ listId: string; listName: string }
 																}`}
 															>
 																{user.email}{' '}
-																{user.invited &&
-																	'- This user has already been invited'}
+																{user.participant
+																	? '- This user is already in the list invited'
+																	: user.invited
+																	? '- This user has already been invited'
+																	: ''}
 															</span>
 															{selected ? (
 																<span

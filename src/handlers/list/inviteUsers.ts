@@ -2,7 +2,12 @@ import qs from 'qs';
 import { z } from 'zod';
 import { FirebaseServer } from '~/firebase/server/firebase.server';
 import { getListId } from '~/helpers/getListId';
-import { InvitationSchema, InvitationStatusEnum, UserSchema } from '~/schema/Schema';
+import {
+	InvitationSchema,
+	InvitationStatusEnum,
+	ListSchema,
+	UserSchema
+} from '~/schema/Schema';
 import { getInvitations } from '../invitation/getInvitations';
 
 export const inviteUsers = async (
@@ -19,13 +24,25 @@ export const inviteUsers = async (
 
 	const parsedInvitedData = UserSchema.array().parse(formDataEntries['invited']);
 
+	const listsSnapshot = await FirebaseServer.database
+		.collection('lists')
+		.doc(listId)
+		.get();
+
+	if (!listsSnapshot.exists) {
+		throw new Error('List does not exist');
+	}
+
+	const listData = ListSchema.parse(listsSnapshot.data());
+
 	// [NOTE]: Currently, I am encountering a bug where you are able to submit duplicate data with headless ui Combobox, so I remove duplicates if I get any
 
 	const invitedIds = parsedInvitedData.map(invited => invited.id);
 
-	// Filter duplicate ids and disallow user to invite himself
+	// Filter duplicate ids, users that are already in the list and disallow user to invite himself
 	const filteredIds = Array.from(new Set(invitedIds)).filter(
-		invitedId => invitedId !== user.id
+		invitedId =>
+			invitedId !== user.id && listData.participants[invitedId] !== undefined
 	);
 
 	const filteredInvited = UserSchema.array().parse(
@@ -34,7 +51,7 @@ export const inviteUsers = async (
 
 	const invitations = await getInvitations({
 		listId,
-		status: [InvitationStatusEnum.enum.pending, InvitationStatusEnum.enum.accepted]
+		status: [InvitationStatusEnum.enum.pending]
 	});
 
 	const invited = filteredInvited.filter(
