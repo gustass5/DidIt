@@ -35,6 +35,10 @@ export const inviteUsers = async (
 
 	const listData = ListSchema.parse(listsSnapshot.data());
 
+	if (listData.deleted) {
+		throw new Error('List is not accessible');
+	}
+
 	// [NOTE]: Currently, I am encountering a bug where you are able to submit duplicate data with headless ui Combobox, so I remove duplicates if I get any
 
 	const invitedIds = parsedInvitedData.map(invited => invited.id);

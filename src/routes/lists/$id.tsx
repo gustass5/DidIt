@@ -35,7 +35,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 
 	const listData = ListSchema.parse({ id: listId, ...listSnapshot.data() });
 
-	if (!(user.id in listData.participants)) {
+	if (!(user.id in listData.participants) || listData.deleted) {
 		throw new Error('List is not accessible');
 	}
 
@@ -87,7 +87,7 @@ export const action = async ({ request, params }: ActionArgs) => {
 
 	const listData = ListSchema.parse(await listSnapshot.data());
 
-	if (!(user.id in listData.participants)) {
+	if (!(user.id in listData.participants) || listData.deleted) {
 		throw new Error('List is not accessible');
 	}
 
@@ -237,6 +237,18 @@ export default function ListPage() {
 					Leave list
 				</button>
 			</Form>
+			{loaderData.listData.author_id === loaderData.user.id && (
+				<Form method="post" action="/lists">
+					<button name="action" value="delete">
+						<input
+							name="listId"
+							type="hidden"
+							value={loaderData.listData.id}
+						/>
+						Delete list
+					</button>
+				</Form>
+			)}
 		</div>
 	);
 }

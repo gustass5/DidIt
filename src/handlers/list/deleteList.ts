@@ -3,7 +3,7 @@ import { FirebaseServer } from '~/firebase/server/firebase.server';
 import { getListId } from '~/helpers/getListId';
 import { ListSchema, UserSchema } from '~/schema/Schema';
 
-export const leaveList = async (
+export const deleteList = async (
 	formData: FormData,
 	user: z.infer<typeof UserSchema>
 ) => {
@@ -22,19 +22,13 @@ export const leaveList = async (
 
 	const listData = ListSchema.parse(listsSnapshot.data());
 
-	if (listData.deleted) {
-		throw new Error('List is not accessible');
+	if (listData.author_id !== user.id) {
+		throw new Error('You cannot delete this list');
 	}
-
-	if (!listData.participants[user.id]) {
-		throw new Error('You are not part of this list');
-	}
-
-	const { [user.id]: _, ...participants } = listData.participants;
 
 	const newListData = ListSchema.parse({
 		...listData,
-		participants,
+		deleted: true,
 		updated_at: currentTimestamp
 	});
 

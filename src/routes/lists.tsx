@@ -14,6 +14,7 @@ import { updateList } from '~/handlers/list/updateList';
 import { inviteUsers } from '~/handlers/list/inviteUsers';
 import { NotificationWidget } from '~/widgets/NotificationWidget';
 import { leaveList } from '~/handlers/list/leaveList';
+import { deleteList } from '~/handlers/list/deleteList';
 
 export const loader = async ({ request }: LoaderArgs) => {
 	const user = await Session.isUserSessionValid(request);
@@ -24,7 +25,8 @@ export const loader = async ({ request }: LoaderArgs) => {
 
 	const listsSnapshot = await FirebaseServer.database
 		.collection('lists')
-		.where(`participants.${user.id}`, '!=', null)
+		.where('deleted', '==', false)
+		.where(`participants.${user.id}.id`, '==', user.id)
 		.get();
 
 	const listsDocuments = listsSnapshot.docs.map(doc =>
@@ -35,7 +37,13 @@ export const loader = async ({ request }: LoaderArgs) => {
 };
 
 const ListActionSchema = z.union(
-	[z.literal('create'), z.literal('update'), z.literal('invite'), z.literal('leave')],
+	[
+		z.literal('create'),
+		z.literal('update'),
+		z.literal('leave'),
+		z.literal('delete'),
+		z.literal('invite')
+	],
 	{
 		invalid_type_error: 'Invalid action type'
 	}
@@ -66,6 +74,12 @@ export const action = async ({ request }: ActionArgs) => {
 
 	if (action === 'leave') {
 		await leaveList(formData, user);
+
+		return null;
+	}
+
+	if (action === 'delete') {
+		await deleteList(formData, user);
 
 		return null;
 	}

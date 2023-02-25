@@ -24,6 +24,10 @@ export const updateList = async (
 
 	const listData = ListSchema.parse(listsSnapshot.data());
 
+	if (listData.deleted) {
+		throw new Error('List is not accessible');
+	}
+
 	if (listData.author_id !== user.id) {
 		throw new Error('You cannot update list you did not create');
 	}
