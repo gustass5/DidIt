@@ -13,6 +13,7 @@ import { createList } from '~/handlers/list/createList';
 import { updateList } from '~/handlers/list/updateList';
 import { inviteUsers } from '~/handlers/list/inviteUsers';
 import { NotificationWidget } from '~/widgets/NotificationWidget';
+import { leaveList } from '~/handlers/list/leaveList';
 
 export const loader = async ({ request }: LoaderArgs) => {
 	const user = await Session.isUserSessionValid(request);
@@ -34,7 +35,7 @@ export const loader = async ({ request }: LoaderArgs) => {
 };
 
 const ListActionSchema = z.union(
-	[z.literal('create'), z.literal('update'), z.literal('invite')],
+	[z.literal('create'), z.literal('update'), z.literal('invite'), z.literal('leave')],
 	{
 		invalid_type_error: 'Invalid action type'
 	}
@@ -59,6 +60,12 @@ export const action = async ({ request }: ActionArgs) => {
 
 	if (action === 'update') {
 		await updateList(formData, user);
+
+		return null;
+	}
+
+	if (action === 'leave') {
+		await leaveList(formData, user);
 
 		return null;
 	}

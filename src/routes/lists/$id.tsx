@@ -231,6 +231,12 @@ export default function ListPage() {
 				</div>
 			</Dialog>
 			<UserInvitationWidget listData={loaderData.listData} />
+			<Form method="post" action="/lists">
+				<button name="action" value="leave">
+					<input name="listId" type="hidden" value={loaderData.listData.id} />
+					Leave list
+				</button>
+			</Form>
 		</div>
 	);
 }
