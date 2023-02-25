@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { z } from 'zod';
 import { FirebaseServer } from '~/firebase/server/firebase.server';
 import { createTask } from '~/handlers/task/createTask';
+import { deleteTask } from '~/handlers/task/deleteTask';
 import { toggleComplete } from '~/handlers/task/toggleComplete';
 import { toggleResponsible } from '~/handlers/task/toggleResponsible';
 import { updateTask } from '~/handlers/task/updateTask';
@@ -53,7 +54,8 @@ const TaskActionSchema = z.union(
 		z.literal('create'),
 		z.literal('update'),
 		z.literal('responsible'),
-		z.literal('complete')
+		z.literal('complete'),
+		z.literal('delete')
 	],
 	{ invalid_type_error: 'Invalid action type' }
 );
@@ -121,6 +123,12 @@ export const action = async ({ request, params }: ActionArgs) => {
 		return null;
 	}
 
+	if (action === 'delete') {
+		await deleteTask(taskSnapshot, listData, user);
+
+		return null;
+	}
+
 	if (action === 'responsible') {
 		await toggleResponsible(taskSnapshot, user);
 
@@ -142,6 +150,7 @@ export default function ListPage() {
 	const responsibleFetcher = useFetcher();
 	const completeFetcher = useFetcher();
 	const updateFetcher = useFetcher();
+	const deleteFetcher = useFetcher();
 
 	const [isOpen, setIsOpen] = useState(false);
 
@@ -169,6 +178,16 @@ export default function ListPage() {
 					{task.completed[loaderData.user.id] ? 'COMPLETED' : 'COMPLETE'}
 				</button>
 			</completeFetcher.Form>
+			{(loaderData.listData.author_id === loaderData.user.id ||
+				task.author_id === loaderData.user.id) && (
+				<deleteFetcher.Form method="post">
+					<input name="taskId" type="hidden" value={task.id} />
+					<button name="action" type="submit" value="delete">
+						delete
+					</button>
+				</deleteFetcher.Form>
+			)}
+
 			<button
 				onClick={() => {
 					setTaskToUpdate(task);
