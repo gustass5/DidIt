@@ -11,6 +11,7 @@ import { toggleResponsible } from '~/handlers/task/toggleResponsible';
 import { updateTask } from '~/handlers/task/updateTask';
 import { ListSchema, TaskSchema } from '~/schema/Schema';
 import { Session } from '~/sessions';
+import { ParticipantsWidget } from '~/widgets/ParticipantsWidget';
 import { UserInvitationWidget } from '~/widgets/UserInvitationWidet';
 
 export const loader = async ({ request, params }: LoaderArgs) => {
@@ -268,6 +269,8 @@ export default function ListPage() {
 					</button>
 				</Form>
 			)}
+
+			<ParticipantsWidget listData={loaderData.listData} user={loaderData.user} />
 		</div>
 	);
 }
