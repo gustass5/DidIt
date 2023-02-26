@@ -43,11 +43,15 @@ export const inviteUsers = async (
 
 	const invitedIds = parsedInvitedData.map(invited => invited.id);
 
-	// Filter duplicate ids, users that are already in the list and disallow user to invite himself
-	const filteredIds = Array.from(new Set(invitedIds)).filter(
-		invitedId =>
-			invitedId !== user.id && listData.participants[invitedId] !== undefined
-	);
+	const filteredIds =
+		// Filter duplicate ids
+		Array.from(new Set(invitedIds)).filter(
+			invitedId =>
+				// Disallow user to invite himself
+				invitedId !== user.id &&
+				//Filter users that are already in the list
+				listData.participants[invitedId] === undefined
+		);
 
 	const filteredInvited = UserSchema.array().parse(
 		filteredIds.map(id => parsedInvitedData.find(invited => invited.id === id))
