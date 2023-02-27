@@ -1,8 +1,7 @@
-import { z } from 'zod';
-import { TaskSchema, UserSchema } from '~/schema/Schema';
+import { TaskSchema, UserType } from '~/schema/Schema';
 import { getList } from '../list/getList';
 
-export const getTask = async (formData: FormData, user: z.infer<typeof UserSchema>) => {
+export const getTask = async (formData: FormData, user: UserType) => {
 	const taskId = formData.get('taskId');
 
 	if (taskId === null) {

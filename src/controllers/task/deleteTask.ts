@@ -1,11 +1,7 @@
-import { z } from 'zod';
-import { UserSchema } from '~/schema/Schema';
+import { UserType } from '~/schema/Schema';
 import { getTask } from './getTask';
 
-export const deleteTask = async (
-	formData: FormData,
-	user: z.infer<typeof UserSchema>
-) => {
+export const deleteTask = async (formData: FormData, user: UserType) => {
 	const { taskData, taskSnapshot, listData } = await getTask(formData, user);
 
 	if (taskData.author_id !== user.id && listData.author_id !== user.id) {

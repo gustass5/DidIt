@@ -1,11 +1,7 @@
-import { z } from 'zod';
-import { TaskSchema, UserSchema } from '~/schema/Schema';
+import { TaskSchema, UserType } from '~/schema/Schema';
 import { getTask } from './getTask';
 
-export const toggleComplete = async (
-	formData: FormData,
-	user: z.infer<typeof UserSchema>
-) => {
+export const toggleComplete = async (formData: FormData, user: UserType) => {
 	const { taskData, taskSnapshot } = await getTask(formData, user);
 
 	if (taskData.responsible[user.id] === undefined) {

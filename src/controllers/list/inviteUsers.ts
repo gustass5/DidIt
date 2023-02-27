@@ -2,14 +2,16 @@ import qs from 'qs';
 import { z } from 'zod';
 import { FirebaseServer } from '~/firebase/server/firebase.server';
 import { getListId } from '~/helpers/getListId';
-import { InvitationSchema, InvitationStatusEnum, UserSchema } from '~/schema/Schema';
+import {
+	InvitationSchema,
+	InvitationStatusEnum,
+	UserSchema,
+	UserType
+} from '~/schema/Schema';
 import { getInvitations } from '../invitation/getInvitations';
 import { getList } from './getList';
 
-export const inviteUsers = async (
-	formData: FormData,
-	user: z.infer<typeof UserSchema>
-) => {
+export const inviteUsers = async (formData: FormData, user: UserType) => {
 	const listId = getListId(formData);
 
 	let errors: z.ZodError[] = [];

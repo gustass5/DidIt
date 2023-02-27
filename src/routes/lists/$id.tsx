@@ -9,7 +9,7 @@ import { deleteTask } from '~/controllers/task/deleteTask';
 import { toggleComplete } from '~/controllers/task/toggleComplete';
 import { toggleResponsible } from '~/controllers/task/toggleResponsible';
 import { updateTask } from '~/controllers/task/updateTask';
-import { TaskSchema } from '~/schema/Schema';
+import { TaskSchema, TaskType } from '~/schema/Schema';
 import { Session } from '~/sessions';
 import { ParticipantsWidget } from '~/widgets/ParticipantsWidget';
 import { UserInvitationWidget } from '~/widgets/UserInvitationWidet';
@@ -103,9 +103,7 @@ export default function ListPage() {
 
 	const [isOpen, setIsOpen] = useState(false);
 
-	const [taskToUpdate, setTaskToUpdate] = useState<z.infer<typeof TaskSchema> | null>(
-		null
-	);
+	const [taskToUpdate, setTaskToUpdate] = useState<TaskType | null>(null);
 
 	const tasks = loaderData.tasks.map((task, index) => (
 		<li key={index} className="flex space-between">

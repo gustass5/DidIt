@@ -4,7 +4,7 @@ import { redirect, LoaderArgs, json, ActionArgs } from '@remix-run/node';
 import { Session } from '~/sessions';
 
 import { FirebaseServer } from '~/firebase/server/firebase.server';
-import { ListSchema } from '~/schema/Schema';
+import { ListSchema, ListType } from '~/schema/Schema';
 import { Form, Link, Outlet, useFetcher, useLoaderData } from '@remix-run/react';
 
 import { useState } from 'react';
@@ -108,9 +108,7 @@ export default function Dashboard() {
 
 	const [isOpen, setIsOpen] = useState(false);
 
-	const [listToUpdate, setListToUpdate] = useState<z.infer<typeof ListSchema> | null>(
-		null
-	);
+	const [listToUpdate, setListToUpdate] = useState<ListType | null>(null);
 
 	const lists = loaderData.lists.map((list, index) => (
 		<li key={index}>

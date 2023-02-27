@@ -7,6 +7,8 @@ export const UserSchema = z.object({
 	image: z.string()
 });
 
+export type UserType = z.infer<typeof UserSchema>;
+
 export const ListSchema = z.object({
 	id: z.optional(z.string()),
 	name: z.string().min(1),
@@ -16,6 +18,8 @@ export const ListSchema = z.object({
 	created_at: z.string(),
 	updated_at: z.string()
 });
+
+export type ListType = z.infer<typeof ListSchema>;
 
 export const TaskSchema = z.object({
 	id: z.optional(z.string()),
@@ -28,12 +32,16 @@ export const TaskSchema = z.object({
 	updated_at: z.string()
 });
 
+export type TaskType = z.infer<typeof TaskSchema>;
+
 export const InvitationStatusEnum = z.enum([
 	'pending',
 	'accepted',
 	'declined',
 	'withdrawn'
 ]);
+
+export type InvitationStatusType = z.infer<typeof InvitationStatusEnum>;
 
 export const InvitationSchema = z.object({
 	id: z.optional(z.string()),
@@ -44,3 +52,5 @@ export const InvitationSchema = z.object({
 	created_at: z.string(),
 	updated_at: z.string()
 });
+
+export type InvitationType = z.infer<typeof InvitationSchema>;

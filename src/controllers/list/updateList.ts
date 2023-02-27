@@ -1,11 +1,7 @@
-import { z } from 'zod';
-import { ListSchema, UserSchema } from '~/schema/Schema';
+import { ListSchema, UserType } from '~/schema/Schema';
 import { getList } from './getList';
 
-export const updateList = async (
-	formData: FormData,
-	user: z.infer<typeof UserSchema>
-) => {
+export const updateList = async (formData: FormData, user: UserType) => {
 	const name = formData.get('name');
 
 	const currentTimestamp = new Date().toISOString();

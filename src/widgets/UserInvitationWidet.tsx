@@ -5,25 +5,25 @@ import { z } from 'zod';
 import {
 	InvitationSchema,
 	InvitationStatusEnum,
-	ListSchema,
-	UserSchema
+	UserSchema,
+	ListType,
+	UserType,
+	InvitationType
 } from '~/schema/Schema';
 
-type ComboboxUserType = (z.infer<typeof UserSchema> & {
+type ComboboxUserType = (UserType & {
 	invited: boolean;
 	participant: boolean;
 })[];
 
 export const UserInvitationWidget: React.FC<{
-	listData: z.infer<typeof ListSchema>;
+	listData: ListType;
 }> = ({ listData }) => {
 	const [isOpen, setIsOpen] = useState(false);
 
-	const [users, setUsers] = useState<z.infer<typeof UserSchema>[]>([]);
+	const [users, setUsers] = useState<UserType[]>([]);
 
-	const [invitations, setInvitations] = useState<z.infer<typeof InvitationSchema>[]>(
-		[]
-	);
+	const [invitations, setInvitations] = useState<InvitationType[]>([]);
 
 	const [filteredUsers, setFilteredUsers] = useState<ComboboxUserType>([]);
 
@@ -85,7 +85,7 @@ export const UserInvitationWidget: React.FC<{
 	}, [invitationsFetcher]);
 
 	useEffect(() => {
-		const checkInvited = (users: z.infer<typeof UserSchema>[]) =>
+		const checkInvited = (users: UserType[]) =>
 			users.map(user => ({
 				...user,
 				invited:

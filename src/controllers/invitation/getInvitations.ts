@@ -1,6 +1,10 @@
 import { z } from 'zod';
 import { FirebaseServer } from '~/firebase/server/firebase.server';
-import { InvitationSchema, InvitationStatusEnum } from '~/schema/Schema';
+import {
+	InvitationType,
+	InvitationSchema,
+	InvitationStatusEnum
+} from '~/schema/Schema';
 
 export const getInvitations = async ({
 	listId,
@@ -10,7 +14,7 @@ export const getInvitations = async ({
 	listId?: string;
 	userId?: string;
 	status?: z.infer<typeof InvitationStatusEnum>[];
-}): Promise<z.infer<typeof InvitationSchema>[]> => {
+}): Promise<InvitationType[]> => {
 	const invitationsCollection = FirebaseServer.database.collection(`invitations`);
 
 	let invitationsQuery;

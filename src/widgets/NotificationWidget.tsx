@@ -1,12 +1,16 @@
 import { Popover } from '@headlessui/react';
 import { useFetcher } from '@remix-run/react';
 import { useEffect, useState } from 'react';
-import { z } from 'zod';
-import { InvitationSchema, InvitationStatusEnum, UserSchema } from '~/schema/Schema';
+import {
+	InvitationSchema,
+	InvitationStatusEnum,
+	UserType,
+	InvitationType
+} from '~/schema/Schema';
 import qs from 'qs';
 
 export const NotificationWidget: React.FC<{
-	user: z.infer<typeof UserSchema>;
+	user: UserType;
 }> = ({ user }) => {
 	const invitationsFetcher = useFetcher();
 
@@ -14,9 +18,7 @@ export const NotificationWidget: React.FC<{
 
 	const declineInvitationFetcher = useFetcher();
 
-	const [invitations, setInvitations] = useState<z.infer<typeof InvitationSchema>[]>(
-		[]
-	);
+	const [invitations, setInvitations] = useState<InvitationType[]>([]);
 
 	useEffect(() => {
 		invitationsFetcher.submit(

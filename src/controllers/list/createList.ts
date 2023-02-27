@@ -1,11 +1,7 @@
-import { z } from 'zod';
 import { FirebaseServer } from '~/firebase/server/firebase.server';
-import { ListSchema, UserSchema } from '~/schema/Schema';
+import { ListSchema, UserType } from '~/schema/Schema';
 
-export const createList = async (
-	formData: FormData,
-	user: z.infer<typeof UserSchema>
-) => {
+export const createList = async (formData: FormData, user: UserType) => {
 	const name = formData.get('name');
 
 	const currentTimestamp = new Date().toISOString();

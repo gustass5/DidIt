@@ -1,12 +1,11 @@
 import { Dialog } from '@headlessui/react';
 import { useFetcher } from '@remix-run/react';
 import { useState } from 'react';
-import { z } from 'zod';
-import { ListSchema, UserSchema } from '~/schema/Schema';
+import { ListType, UserType } from '~/schema/Schema';
 
 export const ParticipantsWidget: React.FC<{
-	listData: z.infer<typeof ListSchema>;
-	user: z.infer<typeof UserSchema>;
+	listData: ListType;
+	user: UserType;
 }> = ({ listData, user }) => {
 	const [isOpen, setIsOpen] = useState(false);
 
