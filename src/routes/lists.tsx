@@ -62,6 +62,7 @@ export const action = async ({ request }: ActionArgs) => {
 
 	// Get action type
 	const action = ListActionSchema.parse(formData.get('action'));
+
 	if (action === 'create') {
 		await createList(formData, user);
 

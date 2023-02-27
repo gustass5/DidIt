@@ -2,13 +2,9 @@ import qs from 'qs';
 import { z } from 'zod';
 import { FirebaseServer } from '~/firebase/server/firebase.server';
 import { getListId } from '~/helpers/getListId';
-import {
-	InvitationSchema,
-	InvitationStatusEnum,
-	ListSchema,
-	UserSchema
-} from '~/schema/Schema';
+import { InvitationSchema, InvitationStatusEnum, UserSchema } from '~/schema/Schema';
 import { getInvitations } from '../invitation/getInvitations';
+import { getList } from './getList';
 
 export const inviteUsers = async (
 	formData: FormData,
@@ -24,20 +20,7 @@ export const inviteUsers = async (
 
 	const parsedInvitedData = UserSchema.array().parse(formDataEntries['invited']);
 
-	const listsSnapshot = await FirebaseServer.database
-		.collection('lists')
-		.doc(listId)
-		.get();
-
-	if (!listsSnapshot.exists) {
-		throw new Error('List does not exist');
-	}
-
-	const listData = ListSchema.parse(listsSnapshot.data());
-
-	if (listData.deleted) {
-		throw new Error('List is not accessible');
-	}
+	const { listData } = await getList(formData);
 
 	// [NOTE]: Currently, I am encountering a bug where you are able to submit duplicate data with headless ui Combobox, so I remove duplicates if I get any
 

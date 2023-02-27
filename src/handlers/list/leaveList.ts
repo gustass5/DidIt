@@ -1,7 +1,6 @@
 import { z } from 'zod';
-import { FirebaseServer } from '~/firebase/server/firebase.server';
-import { getListId } from '~/helpers/getListId';
 import { ListSchema, UserSchema } from '~/schema/Schema';
+import { getList } from './getList';
 
 export const leaveList = async (
 	formData: FormData,
@@ -9,22 +8,7 @@ export const leaveList = async (
 ) => {
 	const currentTimestamp = new Date().toISOString();
 
-	const listId = getListId(formData);
-	// Get list snapshot so changes can be made to it
-	const listsSnapshot = await FirebaseServer.database
-		.collection('lists')
-		.doc(listId)
-		.get();
-
-	if (!listsSnapshot.exists) {
-		throw new Error('List does not exist');
-	}
-
-	const listData = ListSchema.parse(listsSnapshot.data());
-
-	if (listData.deleted) {
-		throw new Error('List is not accessible');
-	}
+	const { listData, listSnapshot } = await getList(formData);
 
 	if (!listData.participants[user.id]) {
 		throw new Error('You are not part of this list');
@@ -38,5 +22,5 @@ export const leaveList = async (
 		updated_at: currentTimestamp
 	});
 
-	await listsSnapshot.ref.set(newListData);
+	await listSnapshot.ref.set(newListData);
 };

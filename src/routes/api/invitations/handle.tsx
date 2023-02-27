@@ -1,6 +1,7 @@
 import { ActionArgs } from '@remix-run/node';
 import { z } from 'zod';
 import { FirebaseServer } from '~/firebase/server/firebase.server';
+import { getList } from '~/handlers/list/getList';
 import { InvitationSchema, InvitationStatusEnum, ListSchema } from '~/schema/Schema';
 import { Session } from '~/sessions';
 
@@ -21,16 +22,16 @@ export const action = async ({ request }: ActionArgs) => {
 
 	const invitationId = z.string().min(1).parse(formData.get('invitationId'));
 
-	const invitationsSnapshot = await FirebaseServer.database
+	const invitationSnapshot = await FirebaseServer.database
 		.collection(`invitations`)
 		.doc(invitationId)
 		.get();
 
-	if (!invitationsSnapshot.exists) {
+	if (!invitationSnapshot.exists) {
 		throw new Error('Invitation does not exist');
 	}
 
-	const invitation = InvitationSchema.parse(invitationsSnapshot.data());
+	const invitation = InvitationSchema.parse(invitationSnapshot.data());
 
 	if (invitation.invited.id !== user.id) {
 		throw new Error('You cannot access this invitation');
@@ -48,21 +49,11 @@ export const action = async ({ request }: ActionArgs) => {
 	});
 
 	if (action === 'decline') {
-		await invitationsSnapshot.ref.set(newInvitationData);
+		await invitationSnapshot.ref.set(newInvitationData);
 		return null;
 	}
 
-	// [TODO]: Write a helper, because this duplicates with code written in handlers/list
-	const listsSnapshot = await FirebaseServer.database
-		.collection('lists')
-		.doc(invitation.list.id)
-		.get();
-
-	if (!listsSnapshot.exists) {
-		throw new Error('List does not exist');
-	}
-
-	const listData = ListSchema.parse(listsSnapshot.data());
+	const { listData, listSnapshot } = await getList(formData);
 
 	if (listData.participants[user.id]) {
 		throw new Error('You are already part of the list');
@@ -76,8 +67,8 @@ export const action = async ({ request }: ActionArgs) => {
 
 	const batch = FirebaseServer.database.batch();
 
-	batch.set(listsSnapshot.ref, newListData);
-	batch.set(invitationsSnapshot.ref, newInvitationData);
+	batch.set(listSnapshot.ref, newListData);
+	batch.set(invitationSnapshot.ref, newInvitationData);
 
 	await batch.commit();
 	return null;

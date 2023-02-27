@@ -4,6 +4,7 @@ import { Form, useFetcher, useLoaderData } from '@remix-run/react';
 import { useState } from 'react';
 import { z } from 'zod';
 import { FirebaseServer } from '~/firebase/server/firebase.server';
+import { getList } from '~/handlers/list/getList';
 import { createTask } from '~/handlers/task/createTask';
 import { deleteTask } from '~/handlers/task/deleteTask';
 import { toggleComplete } from '~/handlers/task/toggleComplete';
@@ -21,27 +22,17 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 		return redirect('/');
 	}
 
-	const listId = params.id;
+	const formData = new FormData();
 
-	if (typeof listId !== 'string') {
-		throw new Error('List id is invalid');
-	}
+	formData.append('listId', params.id || '');
 
-	const listsReference = await FirebaseServer.database.collection('lists');
+	const { listData, listSnapshot } = await getList(formData);
 
-	const listSnapshot = await listsReference.doc(listId).get();
-
-	if (!listSnapshot.exists) {
-		throw new Error('List does not exist');
-	}
-
-	const listData = ListSchema.parse({ id: listId, ...listSnapshot.data() });
-
-	if (!(user.id in listData.participants) || listData.deleted) {
+	if (!(user.id in listData.participants)) {
 		throw new Error('List is not accessible');
 	}
 
-	const tasksSnapshot = await listsReference.doc(listId).collection('tasks').get();
+	const tasksSnapshot = await listSnapshot.ref.collection('tasks').get();
 
 	const tasksDocuments = tasksSnapshot.docs.map(doc =>
 		TaskSchema.parse({ id: doc.id, ...doc.data() })
@@ -70,27 +61,14 @@ export const action = async ({ request, params }: ActionArgs) => {
 
 	const formData = await request.formData();
 
+	formData.append('listId', params.id || '');
+
 	// Get action type
 	const action = TaskActionSchema.parse(formData.get('action'));
 
-	const listId = params.id;
+	const { listData, listSnapshot } = await getList(formData);
 
-	if (typeof listId !== 'string') {
-		throw new Error('List id is invalid');
-	}
-
-	// Get and check if list that task belongs to is available to the user
-	const listsReference = await FirebaseServer.database.collection('lists');
-
-	const listSnapshot = await listsReference.doc(listId).get();
-
-	if (!listSnapshot.exists) {
-		throw new Error('List does not exist');
-	}
-
-	const listData = ListSchema.parse(await listSnapshot.data());
-
-	if (!(user.id in listData.participants) || listData.deleted) {
+	if (!(user.id in listData.participants)) {
 		throw new Error('List is not accessible');
 	}
 
