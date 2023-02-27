@@ -12,7 +12,7 @@ export const kickUser = async (
 		throw new Error('User id is invalid');
 	}
 
-	const { listData, listSnapshot } = await getList(formData);
+	const { listData, listSnapshot } = await getList(formData, user);
 
 	if (listData.author_id !== user.id) {
 		throw new Error('You are not allowed to kick users');

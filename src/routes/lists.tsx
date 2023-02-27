@@ -60,7 +60,6 @@ export const action = async ({ request }: ActionArgs) => {
 
 	const formData = await request.formData();
 
-	// Get action type
 	const action = ListActionSchema.parse(formData.get('action'));
 
 	if (action === 'create') {

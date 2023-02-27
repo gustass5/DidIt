@@ -8,7 +8,7 @@ export const deleteList = async (
 ) => {
 	const currentTimestamp = new Date().toISOString();
 
-	const { listData, listSnapshot } = await getList(formData);
+	const { listData, listSnapshot } = await getList(formData, user);
 
 	if (listData.author_id !== user.id) {
 		throw new Error('You cannot delete this list');

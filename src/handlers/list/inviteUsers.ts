@@ -20,7 +20,7 @@ export const inviteUsers = async (
 
 	const parsedInvitedData = UserSchema.array().parse(formDataEntries['invited']);
 
-	const { listData } = await getList(formData);
+	const { listData } = await getList(formData, user);
 
 	// [NOTE]: Currently, I am encountering a bug where you are able to submit duplicate data with headless ui Combobox, so I remove duplicates if I get any
 

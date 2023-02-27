@@ -8,7 +8,7 @@ export const leaveList = async (
 ) => {
 	const currentTimestamp = new Date().toISOString();
 
-	const { listData, listSnapshot } = await getList(formData);
+	const { listData, listSnapshot } = await getList(formData, user);
 
 	if (!listData.participants[user.id]) {
 		throw new Error('You are not part of this list');
