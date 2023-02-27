@@ -1,7 +1,7 @@
 import { ActionArgs } from '@remix-run/node';
 import { z } from 'zod';
 import { FirebaseServer } from '~/firebase/server/firebase.server';
-import { getList } from '~/handlers/list/getList';
+import { getList } from '~/controllers/list/getList';
 import { InvitationSchema, InvitationStatusEnum, ListSchema } from '~/schema/Schema';
 import { Session } from '~/sessions';
 
@@ -53,7 +53,7 @@ export const action = async ({ request }: ActionArgs) => {
 		return null;
 	}
 
-	const { listData, listSnapshot } = await getList(formData);
+	const { listData, listSnapshot } = await getList(formData, user);
 
 	if (listData.participants[user.id]) {
 		throw new Error('You are already part of the list');

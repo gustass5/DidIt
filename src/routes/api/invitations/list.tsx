@@ -2,7 +2,7 @@ import { ActionArgs } from '@remix-run/node';
 import { InvitationStatusEnum } from '~/schema/Schema';
 import { Session } from '~/sessions';
 import { getListId } from '~/helpers/getListId';
-import { getInvitations } from '~/handlers/invitation/getInvitations';
+import { getInvitations } from '~/controllers/invitation/getInvitations';
 import qs from 'qs';
 
 /**

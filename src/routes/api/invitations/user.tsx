@@ -1,7 +1,7 @@
 import { ActionArgs } from '@remix-run/node';
 import { InvitationStatusEnum, UserSchema } from '~/schema/Schema';
 import { Session } from '~/sessions';
-import { getInvitations } from '~/handlers/invitation/getInvitations';
+import { getInvitations } from '~/controllers/invitation/getInvitations';
 import qs from 'qs';
 import { z } from 'zod';
 

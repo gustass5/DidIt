@@ -9,13 +9,13 @@ import { Form, Link, Outlet, useFetcher, useLoaderData } from '@remix-run/react'
 
 import { useState } from 'react';
 import { z } from 'zod';
-import { createList } from '~/handlers/list/createList';
-import { updateList } from '~/handlers/list/updateList';
-import { inviteUsers } from '~/handlers/list/inviteUsers';
+import { createList } from '~/controllers/list/createList';
+import { updateList } from '~/controllers/list/updateList';
+import { inviteUsers } from '~/controllers/list/inviteUsers';
 import { NotificationWidget } from '~/widgets/NotificationWidget';
-import { leaveList } from '~/handlers/list/leaveList';
-import { deleteList } from '~/handlers/list/deleteList';
-import { kickUser } from '~/handlers/list/kickUser';
+import { leaveList } from '~/controllers/list/leaveList';
+import { deleteList } from '~/controllers/list/deleteList';
+import { kickUser } from '~/controllers/list/kickUser';
 
 export const loader = async ({ request }: LoaderArgs) => {
 	const user = await Session.isUserSessionValid(request);
