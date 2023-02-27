@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import { TaskSchema, UserSchema } from '~/schema/Schema';
+import { getList } from '../list/getList';
 
 export const createTask = async (
-	listSnapshot: FirebaseFirestore.DocumentSnapshot<FirebaseFirestore.DocumentData>,
 	formData: FormData,
 	user: z.infer<typeof UserSchema>
 ) => {
@@ -24,6 +24,8 @@ export const createTask = async (
 		created_at: currentTimestamp,
 		updated_at: currentTimestamp
 	});
+
+	const { listSnapshot } = await getList(formData, user);
 
 	await listSnapshot.ref.collection('tasks').add(newTask);
 };

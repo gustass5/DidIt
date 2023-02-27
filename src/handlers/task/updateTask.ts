@@ -1,12 +1,12 @@
 import { z } from 'zod';
 import { TaskSchema, UserSchema } from '~/schema/Schema';
+import { getTask } from './getTask';
 
 export const updateTask = async (
-	taskSnapshot: FirebaseFirestore.DocumentSnapshot<FirebaseFirestore.DocumentData>,
 	formData: FormData,
 	user: z.infer<typeof UserSchema>
 ) => {
-	const taskData = TaskSchema.parse(taskSnapshot.data());
+	const { taskData, taskSnapshot } = await getTask(formData, user);
 
 	if (taskData.author_id !== user.id) {
 		throw new Error('You cannot update task you did not create');

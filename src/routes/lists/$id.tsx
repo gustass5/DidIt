@@ -3,14 +3,13 @@ import { json, LoaderArgs, redirect, ActionArgs } from '@remix-run/node';
 import { Form, useFetcher, useLoaderData } from '@remix-run/react';
 import { useState } from 'react';
 import { z } from 'zod';
-import { FirebaseServer } from '~/firebase/server/firebase.server';
 import { getList } from '~/handlers/list/getList';
 import { createTask } from '~/handlers/task/createTask';
 import { deleteTask } from '~/handlers/task/deleteTask';
 import { toggleComplete } from '~/handlers/task/toggleComplete';
 import { toggleResponsible } from '~/handlers/task/toggleResponsible';
 import { updateTask } from '~/handlers/task/updateTask';
-import { ListSchema, TaskSchema } from '~/schema/Schema';
+import { TaskSchema } from '~/schema/Schema';
 import { Session } from '~/sessions';
 import { ParticipantsWidget } from '~/widgets/ParticipantsWidget';
 import { UserInvitationWidget } from '~/widgets/UserInvitationWidet';
@@ -26,11 +25,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 
 	formData.append('listId', params.id || '');
 
-	const { listData, listSnapshot } = await getList(formData);
-
-	if (!(user.id in listData.participants)) {
-		throw new Error('List is not accessible');
-	}
+	const { listData, listSnapshot } = await getList(formData, user);
 
 	const tasksSnapshot = await listSnapshot.ref.collection('tasks').get();
 
@@ -63,59 +58,34 @@ export const action = async ({ request, params }: ActionArgs) => {
 
 	formData.append('listId', params.id || '');
 
-	// Get action type
 	const action = TaskActionSchema.parse(formData.get('action'));
 
-	const { listData, listSnapshot } = await getList(formData);
-
-	if (!(user.id in listData.participants)) {
-		throw new Error('List is not accessible');
-	}
-
 	if (action === 'create') {
-		await createTask(listSnapshot, formData, user);
+		await createTask(formData, user);
 
 		return null;
 	}
 
-	// If action was not to create a new task, check if task id was provided
-	const taskId = formData.get('taskId');
-
-	if (taskId === null) {
-		throw new Error('No task id provided');
-	}
-
-	if (typeof taskId !== 'string') {
-		throw new Error('Task id is invalid');
-	}
-
-	// Get task snapshot so changes can be made to it
-	const taskSnapshot = await listSnapshot.ref.collection('tasks').doc(taskId).get();
-
-	if (!taskSnapshot.exists) {
-		throw new Error('Task does not exist');
-	}
-
 	if (action === 'update') {
-		await updateTask(taskSnapshot, formData, user);
+		await updateTask(formData, user);
 
 		return null;
 	}
 
 	if (action === 'delete') {
-		await deleteTask(taskSnapshot, listData, user);
+		await deleteTask(formData, user);
 
 		return null;
 	}
 
 	if (action === 'responsible') {
-		await toggleResponsible(taskSnapshot, user);
+		await toggleResponsible(formData, user);
 
 		return null;
 	}
 
 	if (action === 'complete') {
-		await toggleComplete(taskSnapshot, user);
+		await toggleComplete(formData, user);
 
 		return null;
 	}

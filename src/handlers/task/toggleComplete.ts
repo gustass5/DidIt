@@ -1,11 +1,12 @@
 import { z } from 'zod';
 import { TaskSchema, UserSchema } from '~/schema/Schema';
+import { getTask } from './getTask';
 
 export const toggleComplete = async (
-	taskSnapshot: FirebaseFirestore.DocumentSnapshot<FirebaseFirestore.DocumentData>,
+	formData: FormData,
 	user: z.infer<typeof UserSchema>
 ) => {
-	const taskData = TaskSchema.parse(taskSnapshot.data());
+	const { taskData, taskSnapshot } = await getTask(formData, user);
 
 	if (taskData.responsible[user.id] === undefined) {
 		throw new Error(
