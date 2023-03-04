@@ -112,11 +112,11 @@ export default function Dashboard() {
 	));
 
 	return (
-		<div className="flex flex-col">
+		<div className="h-full flex flex-col">
 			<div className="flex">
 				<div className="flex items-center w-[300px] p-2 bg-gray-800 h-24 text-orange-400">
 					<Logo />
-					<span className="text-2xl font-semibold">DIDIT</span>
+					<span className="px-4 text-2xl font-semibold">DIDIT</span>
 				</div>
 				<div className="flex flex-1 bg-gray-800 items-center justify-end">
 					<NotificationWidget user={loaderData.user} />
@@ -125,8 +125,8 @@ export default function Dashboard() {
 				</div>
 			</div>
 
-			<div className="flex">
-				<div className="flex flex-col w-[300px] h-screen bg-gray-800">
+			<div className="flex flex-1">
+				<div className="flex flex-col w-[300px] bg-gray-800">
 					<Form method="post">
 						<input name="name" type="text" placeholder="Name" />
 						<button name="action" type="submit" value="create">
@@ -134,10 +134,12 @@ export default function Dashboard() {
 						</button>
 					</Form>
 
-					<ul className="flex flex-1 flex-col p-2 space-y-2">{lists}</ul>
+					<ul className="flex flex-col p-2 space-y-2">{lists}</ul>
 				</div>
 
-				<Outlet />
+				<div className="flex-1">
+					<Outlet />
+				</div>
 			</div>
 		</div>
 	);
