@@ -64,7 +64,7 @@ export default function App() {
 				<link rel="manifest" href="/resources/manifest.webmanifest" />
 				<Links />
 			</head>
-			<body>
+			<body className="bg-[#111319]">
 				<Outlet />
 				<ScrollRestoration />
 				<Scripts />
