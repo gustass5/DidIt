@@ -1,13 +1,10 @@
-import { Dialog } from '@headlessui/react';
-
 import { redirect, LoaderArgs, json, ActionArgs } from '@remix-run/node';
 import { Session } from '~/sessions';
 
 import { FirebaseServer } from '~/firebase/server/firebase.server';
-import { ListSchema, ListType } from '~/schema/Schema';
-import { Form, Link, Outlet, useFetcher, useLoaderData } from '@remix-run/react';
-
-import { useState } from 'react';
+import { ListSchema } from '~/schema/Schema';
+import { Form, Outlet, useLoaderData } from '@remix-run/react';
+import {} from '@headlessui/react';
 import { z } from 'zod';
 import { createList } from '~/controllers/list/createList';
 import { updateList } from '~/controllers/list/updateList';
@@ -18,6 +15,8 @@ import { deleteList } from '~/controllers/list/deleteList';
 import { kickUser } from '~/controllers/list/kickUser';
 import { ListItem } from '~/components/ListItem/ListItem';
 import { UpdateListWidget } from '~/widgets/UpdateListWidget';
+import { UserMenu } from '~/components/UserMenu/UserMenu';
+import { Logo } from '~/components/Logo/Logo';
 
 export const loader = async ({ request }: LoaderArgs) => {
 	const user = await Session.isUserSessionValid(request);
@@ -113,25 +112,31 @@ export default function Dashboard() {
 	));
 
 	return (
-		<div className="flex">
-			<div className="flex flex-col w-[300px] h-screen bg-[#0d0f15]">
-				<div>{/* Place for logo */}</div>
-				<h1>
-					<Link to="lists">Lists</Link>
-				</h1>
+		<div className="flex flex-col">
+			<div className="flex">
+				<div className="flex items-center w-[300px] p-2 bg-gray-800 h-24 text-orange-400">
+					<Logo />
+					<span className="text-2xl font-semibold">DIDIT</span>
+				</div>
+				<div className="flex flex-1 bg-gray-800 items-center justify-end">
+					<NotificationWidget user={loaderData.user} />
 
-				<NotificationWidget user={loaderData.user} />
-
-				<Form method="post">
-					<input name="name" type="text" placeholder="Name" />
-					<button name="action" type="submit" value="create">
-						Create
-					</button>
-				</Form>
-
-				<ul className="flex flex-1 flex-col p-2 space-y-2">{lists}</ul>
+					<UserMenu />
+				</div>
 			</div>
-			<div className="flex flex-1">
+
+			<div className="flex">
+				<div className="flex flex-col w-[300px] h-screen bg-gray-800">
+					<Form method="post">
+						<input name="name" type="text" placeholder="Name" />
+						<button name="action" type="submit" value="create">
+							Create
+						</button>
+					</Form>
+
+					<ul className="flex flex-1 flex-col p-2 space-y-2">{lists}</ul>
+				</div>
+
 				<Outlet />
 			</div>
 		</div>
