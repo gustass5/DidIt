@@ -16,6 +16,8 @@ import { NotificationWidget } from '~/widgets/NotificationWidget';
 import { leaveList } from '~/controllers/list/leaveList';
 import { deleteList } from '~/controllers/list/deleteList';
 import { kickUser } from '~/controllers/list/kickUser';
+import { ListItem } from '~/components/ListItem/ListItem';
+import { UpdateListWidget } from '~/widgets/UpdateListWidget';
 
 export const loader = async ({ request }: LoaderArgs) => {
 	const user = await Session.isUserSessionValid(request);
@@ -104,75 +106,34 @@ export const action = async ({ request }: ActionArgs) => {
 export default function Dashboard() {
 	const loaderData = useLoaderData<typeof loader>();
 
-	const updateFetcher = useFetcher();
-
-	const [isOpen, setIsOpen] = useState(false);
-
-	const [listToUpdate, setListToUpdate] = useState<ListType | null>(null);
-
 	const lists = loaderData.lists.map((list, index) => (
-		<li key={index}>
-			<Link to={`${list.id}`}>{list.name}</Link>
-			<button
-				onClick={() => {
-					setListToUpdate(list);
-					setIsOpen(true);
-				}}
-			>
-				UPDATE
-			</button>
-		</li>
+		<ListItem key={index} list={list}>
+			<UpdateListWidget list={list} />
+		</ListItem>
 	));
 
 	return (
-		<>
-			<h1>
-				<Link to="lists">Lists</Link>
-			</h1>
+		<div className="flex">
+			<div className="flex flex-col w-[300px] h-screen bg-[#0d0f15]">
+				<div>{/* Place for logo */}</div>
+				<h1>
+					<Link to="lists">Lists</Link>
+				</h1>
 
-			<ul>{lists}</ul>
-			<hr />
-			<Form method="post">
-				<input name="name" type="text" placeholder="Name" />
-				<button name="action" type="submit" value="create">
-					Create
-				</button>
-			</Form>
+				<NotificationWidget user={loaderData.user} />
 
-			<Dialog
-				open={isOpen}
-				onClose={() => setIsOpen(false)}
-				className="relative z-50"
-			>
-				<div className="fixed inset-0 bg-black/30" aria-hidden="true" />
-				<div className="fixed inset-0 flex items-center justify-center p-4">
-					<Dialog.Panel className="w-full max-w-sm rounded bg-white">
-						<Dialog.Title>Update list name</Dialog.Title>
-						<Dialog.Description>
-							This will update list name
-						</Dialog.Description>
+				<Form method="post">
+					<input name="name" type="text" placeholder="Name" />
+					<button name="action" type="submit" value="create">
+						Create
+					</button>
+				</Form>
 
-						<updateFetcher.Form method="post">
-							<input
-								name="listId"
-								type="hidden"
-								value={listToUpdate?.id}
-							/>
-							<input
-								name="name"
-								type="text"
-								placeholder="Name"
-								defaultValue={listToUpdate?.name}
-							/>
-							<button name="action" type="submit" value="update">
-								Update
-							</button>
-						</updateFetcher.Form>
-					</Dialog.Panel>
-				</div>
-			</Dialog>
-			<Outlet />
-			<NotificationWidget user={loaderData.user} />
-		</>
+				<ul className="flex flex-1 flex-col p-2 space-y-2">{lists}</ul>
+			</div>
+			<div className="flex flex-1">
+				<Outlet />
+			</div>
+		</div>
 	);
 }
