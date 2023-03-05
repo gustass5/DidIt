@@ -1,8 +1,8 @@
-import { Dialog } from '@headlessui/react';
 import { json, LoaderArgs, redirect, ActionArgs } from '@remix-run/node';
-import { Form, useFetcher, useLoaderData } from '@remix-run/react';
+import { useLoaderData } from '@remix-run/react';
 import { useState } from 'react';
 import { z } from 'zod';
+import { Card } from '~/components/Card/Card';
 import { getList } from '~/controllers/list/getList';
 import { createTask } from '~/controllers/task/createTask';
 import { deleteTask } from '~/controllers/task/deleteTask';
@@ -13,6 +13,19 @@ import { TaskSchema, TaskType } from '~/schema/Schema';
 import { Session } from '~/sessions';
 import { ParticipantsWidget } from '~/widgets/ParticipantsWidget';
 import { UserInvitationWidget } from '~/widgets/UserInvitationWidet';
+import {
+	UsersIcon,
+	StopCircleIcon,
+	CheckCircleIcon
+} from '@heroicons/react/24/outline';
+import { InfoCard } from '~/components/InfoCard/InfoCard';
+import { UpdateTaskWidget } from '~/widgets/UpdateTaskWidget';
+import { DeleteListWidget } from '~/widgets/DeleteListWidget';
+import { LeaveListWidget } from '~/widgets/LeaveListWidget';
+import { CreateTaskWidget } from '~/widgets/CreateTaskWidget';
+import { SetResponsibleWidget } from '~/widgets/SetResponsibleWidget';
+import { SetCompleteWidget } from '~/widgets/SetCompleteWidget';
+import { DeleteTaskWidget } from '~/widgets/DeleteTaskWidget';
 
 export const loader = async ({ request, params }: LoaderArgs) => {
 	const user = await Session.isUserSessionValid(request);
@@ -96,56 +109,37 @@ export const action = async ({ request, params }: ActionArgs) => {
 export default function ListPage() {
 	const loaderData = useLoaderData<typeof loader>();
 
-	const responsibleFetcher = useFetcher();
-	const completeFetcher = useFetcher();
-	const updateFetcher = useFetcher();
-	const deleteFetcher = useFetcher();
+	const [actionable, setActionable] = useState(false);
 
-	const [isOpen, setIsOpen] = useState(false);
+	const isUserListOwner = loaderData.listData.author_id === loaderData.user.id;
 
-	const [taskToUpdate, setTaskToUpdate] = useState<TaskType | null>(null);
+	const tasks = loaderData.tasks.map((task, index) => {
+		const isUserTaskCreator = task.author_id === loaderData.user.id;
 
-	const tasks = loaderData.tasks.map((task, index) => (
-		<li key={index} className="flex space-between">
-			<span>{task.name}</span>
-			<responsibleFetcher.Form method="post">
-				<input name="taskId" type="hidden" value={task.id} />
-				<button name="action" type="submit" value="responsible">
-					{task.responsible[loaderData.user.id] ? 'JOINED' : 'JOIN'}
-				</button>
-			</responsibleFetcher.Form>
-			<completeFetcher.Form method="post">
-				<input name="taskId" type="hidden" value={task.id} />
-				<button
-					name="action"
-					type="submit"
-					value="complete"
-					disabled={!task.responsible[loaderData.user.id]}
-				>
-					{task.completed[loaderData.user.id] ? 'COMPLETED' : 'COMPLETE'}
-				</button>
-			</completeFetcher.Form>
-			{(loaderData.listData.author_id === loaderData.user.id ||
-				task.author_id === loaderData.user.id) && (
-				<deleteFetcher.Form method="post">
-					<input name="taskId" type="hidden" value={task.id} />
-					<button name="action" type="submit" value="delete">
-						delete
-					</button>
-				</deleteFetcher.Form>
-			)}
+		const isUserTaskParticipant =
+			task.responsible[loaderData.user.id] !== undefined;
 
-			<button
-				onClick={() => {
-					setTaskToUpdate(task);
-					setIsOpen(true);
-				}}
+		return (
+			<li
+				key={index}
+				className="flex justify-between p-4 rounded text-[#9ba6b2] bg-[#191d2a]"
 			>
-				UPDATE
-			</button>
-		</li>
-	));
+				<span>{task.name}</span>
 
+				<SetResponsibleWidget task={task} user={loaderData.user} />
+
+				{isUserTaskParticipant && (
+					<SetCompleteWidget task={task} user={loaderData.user} />
+				)}
+
+				{(isUserListOwner || isUserTaskCreator) && actionable && (
+					<DeleteTaskWidget task={task} />
+				)}
+
+				{actionable && <UpdateTaskWidget task={task} />}
+			</li>
+		);
+	});
 	return (
 		<div className="flex flex-col p-6">
 			<div className="flex space-x-6">
@@ -180,69 +174,16 @@ export default function ListPage() {
 			) : (
 				<span>No tasks yet</span>
 			)}
-			<Form method="post">
-				<input name="name" type="text" placeholder="Name" />
-				<input name="labels" type="text" placeholder="Label(s)" />
-				<button name="action" type="submit" value="create">
-					Create
-				</button>
-			</Form>
 
-			<Dialog
-				open={isOpen}
-				onClose={() => setIsOpen(false)}
-				className="relative z-50"
-			>
-				<div className="fixed inset-0 bg-black/30" aria-hidden="true" />
-				<div className="fixed inset-0 flex items-center justify-center p-4">
-					<Dialog.Panel className="w-full max-w-sm rounded bg-white">
-						<Dialog.Title>Update task</Dialog.Title>
-						<Dialog.Description>This will update task</Dialog.Description>
+			<hr />
 
-						<updateFetcher.Form method="post">
-							<input
-								name="taskId"
-								type="hidden"
-								value={taskToUpdate?.id}
-							/>
-							<input
-								name="name"
-								type="text"
-								placeholder="Name"
-								defaultValue={taskToUpdate?.name}
-							/>
-							<input
-								name="labels"
-								type="text"
-								placeholder="Label(s)"
-								defaultValue={taskToUpdate?.labels}
-							/>
-							<button name="action" type="submit" value="update">
-								Update
-							</button>
-						</updateFetcher.Form>
-					</Dialog.Panel>
-				</div>
-			</Dialog>
+			<CreateTaskWidget />
+
 			<UserInvitationWidget listData={loaderData.listData} />
-			<Form method="post" action="/lists">
-				<button name="action" value="leave">
-					<input name="listId" type="hidden" value={loaderData.listData.id} />
-					Leave list
-				</button>
-			</Form>
-			{loaderData.listData.author_id === loaderData.user.id && (
-				<Form method="post" action="/lists">
-					<button name="action" value="delete">
-						<input
-							name="listId"
-							type="hidden"
-							value={loaderData.listData.id}
-						/>
-						Delete list
-					</button>
-				</Form>
-			)}
+
+			<LeaveListWidget listId={loaderData.listData.id} />
+
+			{isUserListOwner && <DeleteListWidget listId={loaderData.listData.id} />}
 
 			<ParticipantsWidget listData={loaderData.listData} user={loaderData.user} />
 		</div>
