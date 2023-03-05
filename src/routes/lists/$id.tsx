@@ -147,11 +147,39 @@ export default function ListPage() {
 	));
 
 	return (
-		<div>
-			<h1>Single list</h1>
-			{tasks.length !== 0 ? <ul>{tasks}</ul> : <span>No tasks yet</span>}
-			<hr />
+		<div className="flex flex-col p-6">
+			<div className="flex space-x-6">
+				<InfoCard list={loaderData.listData} />
+				<div className="flex flex-1 justify-between">
+					<Card
+						title="Total tasks"
+						data={12}
+						backgroundColorClass="bg-teal-400"
+						textColorClass="text-teal-400"
+						icon={StopCircleIcon}
+					/>
+					<Card
+						title="Completed"
+						data={4}
+						backgroundColorClass="bg-green-400"
+						textColorClass="text-green-400"
+						icon={CheckCircleIcon}
+					/>
+					<Card
+						title="Participants"
+						data={5}
+						backgroundColorClass="bg-indigo-400"
+						textColorClass="text-indigo-400"
+						icon={UsersIcon}
+					/>
+				</div>
+			</div>
 
+			{tasks.length !== 0 ? (
+				<ul className="flex flex-col space-y-2 py-6">{tasks}</ul>
+			) : (
+				<span>No tasks yet</span>
+			)}
 			<Form method="post">
 				<input name="name" type="text" placeholder="Name" />
 				<input name="labels" type="text" placeholder="Label(s)" />
