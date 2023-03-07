@@ -125,18 +125,21 @@ export default function ListPage() {
 				className="flex justify-between p-4 rounded text-[#9ba6b2] bg-[#191d2a]"
 			>
 				<span>{task.name}</span>
+				<div className="flex space-x-2">
+					{isUserTaskParticipant && (
+						<SetCompleteWidget task={task} user={loaderData.user} />
+					)}
 
-				<SetResponsibleWidget task={task} user={loaderData.user} />
+					{(!isUserTaskParticipant || actionable) && (
+						<SetResponsibleWidget task={task} user={loaderData.user} />
+					)}
 
-				{isUserTaskParticipant && (
-					<SetCompleteWidget task={task} user={loaderData.user} />
-				)}
+					{actionable && <UpdateTaskWidget task={task} />}
 
-				{(isUserListOwner || isUserTaskCreator) && actionable && (
-					<DeleteTaskWidget task={task} />
-				)}
-
-				{actionable && <UpdateTaskWidget task={task} />}
+					{(isUserListOwner || isUserTaskCreator) && actionable && (
+						<DeleteTaskWidget task={task} />
+					)}
+				</div>
 			</li>
 		);
 	});

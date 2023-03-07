@@ -10,7 +10,12 @@ export const UpdateTaskWidget: React.FC<{ task: TaskType }> = ({ task }) => {
 
 	return (
 		<>
-			<button onClick={() => setIsOpen(true)}>UPDATE</button>
+			<button
+				onClick={() => setIsOpen(true)}
+				className="font-semibold text-blue-400"
+			>
+				UPDATE
+			</button>
 
 			<Dialog
 				open={isOpen}
