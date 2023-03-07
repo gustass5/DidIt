@@ -11,8 +11,10 @@ export const SetCompleteWidget: React.FC<{ task: TaskType; user: UserType }> = (
 		<completeFetcher.Form method="post">
 			<input name="taskId" type="hidden" value={task.id} />
 			<button
-				className={`font-semibold ${
-					task.completed[user.id] ? 'text-green-400' : 'text-indigo-400'
+				className={`font-semibold border py-2 px-4 rounded w-32 ${
+					task.completed[user.id]
+						? 'text-green-400 border-green-400'
+						: 'text-indigo-400 border-indigo-400'
 				}`}
 				name="action"
 				type="submit"

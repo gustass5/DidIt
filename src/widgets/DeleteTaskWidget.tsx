@@ -11,7 +11,7 @@ export const DeleteTaskWidget: React.FC<{ task: TaskType }> = ({ task }) => {
 				name="action"
 				type="submit"
 				value="delete"
-				className="font-semibold text-[#F64668]"
+				className="font-semibold text-[#F64668] border py-2 px-4 rounded w-24 border-[#F64668]"
 			>
 				DELETE
 			</button>

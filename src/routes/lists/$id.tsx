@@ -122,7 +122,7 @@ export default function ListPage() {
 		return (
 			<li
 				key={index}
-				className="flex justify-between p-4 rounded text-[#9ba6b2] bg-[#191d2a]"
+				className="flex justify-between items-center p-4 rounded text-[#9ba6b2] bg-[#191d2a]"
 			>
 				<span>{task.name}</span>
 				<div className="flex space-x-2">

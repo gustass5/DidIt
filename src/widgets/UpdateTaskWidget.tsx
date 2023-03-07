@@ -12,7 +12,7 @@ export const UpdateTaskWidget: React.FC<{ task: TaskType }> = ({ task }) => {
 		<>
 			<button
 				onClick={() => setIsOpen(true)}
-				className="font-semibold text-blue-400"
+				className="font-semibold text-blue-400 border py-2 px-4 rounded w-24 border-blue-400"
 			>
 				UPDATE
 			</button>
