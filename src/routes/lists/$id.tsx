@@ -16,7 +16,8 @@ import { UserInvitationWidget } from '~/widgets/UserInvitationWidet';
 import {
 	UsersIcon,
 	StopCircleIcon,
-	CheckCircleIcon
+	CheckCircleIcon,
+	CircleStackIcon
 } from '@heroicons/react/24/outline';
 import { InfoCard } from '~/components/InfoCard/InfoCard';
 import { UpdateTaskWidget } from '~/widgets/UpdateTaskWidget';
@@ -151,6 +152,13 @@ export default function ListPage() {
 					<Card
 						title="Total tasks"
 						data={12}
+						backgroundColorClass="bg-blue-400"
+						textColorClass="text-blue-400"
+						icon={CircleStackIcon}
+					/>
+					<Card
+						title="Tasks covered"
+						data={8}
 						backgroundColorClass="bg-teal-400"
 						textColorClass="text-teal-400"
 						icon={StopCircleIcon}
