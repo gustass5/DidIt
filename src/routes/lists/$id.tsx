@@ -172,15 +172,13 @@ export default function ListPage() {
 				</div>
 			</div>
 
+			<CreateTaskWidget />
+
 			{tasks.length !== 0 ? (
 				<ul className="flex flex-col space-y-2 py-6">{tasks}</ul>
 			) : (
 				<span>No tasks yet</span>
 			)}
-
-			<hr />
-
-			<CreateTaskWidget />
 
 			<UserInvitationWidget listData={loaderData.listData} />
 
