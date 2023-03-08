@@ -24,7 +24,7 @@ export const CreateTaskWidget: React.FC = () => (
 			name="action"
 			type="submit"
 			value="create"
-			className="font-semibold text-orange-400"
+			className="font-semibold text-orange-400 border py-2 px-4 rounded w-32 border-orange-400"
 		>
 			CREATE
 		</button>
