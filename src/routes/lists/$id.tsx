@@ -110,17 +110,16 @@ export const action = async ({ request, params }: ActionArgs) => {
 };
 
 export default function ListPage() {
-	const loaderData = useLoaderData<typeof loader>();
+	const { listData, tasks: listTasks, user } = useLoaderData<typeof loader>();
 
 	const [actionable, setActionable] = useState(false);
 
-	const isUserListOwner = loaderData.listData.author_id === loaderData.user.id;
+	const isUserListOwner = listData.author_id === user.id;
 
-	const tasks = loaderData.tasks.map((task, index) => {
-		const isUserTaskCreator = task.author_id === loaderData.user.id;
+	const tasks = listTasks.map((task, index) => {
+		const isUserTaskCreator = task.author_id === user.id;
 
-		const isUserTaskParticipant =
-			task.responsible[loaderData.user.id] !== undefined;
+		const isUserTaskParticipant = task.responsible[user.id] !== undefined;
 
 		const taskResponsible = Object.values(task.responsible);
 
@@ -143,11 +142,11 @@ export default function ListPage() {
 
 				<div className="flex flex-1 space-x-2 justify-end">
 					{isUserTaskParticipant && (
-						<SetCompleteWidget task={task} user={loaderData.user} />
+						<SetCompleteWidget task={task} user={user} />
 					)}
 
 					{(!isUserTaskParticipant || actionable) && (
-						<SetResponsibleWidget task={task} user={loaderData.user} />
+						<SetResponsibleWidget task={task} user={user} />
 					)}
 
 					{actionable && <UpdateTaskWidget task={task} />}
@@ -162,11 +161,11 @@ export default function ListPage() {
 	return (
 		<div className="flex flex-col p-6">
 			<div className="flex space-x-6">
-				<InfoCard list={loaderData.listData} />
-				<div className="flex flex-1 justify-between">
+				<InfoCard list={listData} />
+				<div className="flex flex-1 justify-between space-x-6">
 					<Card
 						title="Total tasks"
-						data={loaderData.tasks.length}
+						data={listTasks.length}
 						backgroundColorClass="bg-blue-400"
 						textColorClass="text-blue-400"
 						icon={CircleStackIcon}
@@ -174,7 +173,7 @@ export default function ListPage() {
 					<Card
 						title="Tasks covered"
 						data={
-							loaderData.tasks.filter(
+							listTasks.filter(
 								task => Object.values(task.responsible).length > 0
 							).length
 						}
@@ -183,9 +182,9 @@ export default function ListPage() {
 						icon={StopCircleIcon}
 					/>
 					<Card
-						title="Completed"
+						title="Tasks completed"
 						data={
-							loaderData.tasks.filter(
+							listTasks.filter(
 								task => Object.values(task.completed).length > 0
 							).length
 						}
@@ -195,7 +194,7 @@ export default function ListPage() {
 					/>
 					<Card
 						title="Participants"
-						data={Object.values(loaderData.listData.participants).length}
+						data={Object.values(listData.participants).length}
 						backgroundColorClass="bg-indigo-400"
 						textColorClass="text-indigo-400"
 						icon={UsersIcon}
@@ -222,13 +221,13 @@ export default function ListPage() {
 				<span>No tasks yet</span>
 			)}
 
-			<UserInvitationWidget listData={loaderData.listData} />
+			<UserInvitationWidget listData={listData} />
 
-			<LeaveListWidget listId={loaderData.listData.id} />
+			<LeaveListWidget listId={listData.id} />
 
-			{isUserListOwner && <DeleteListWidget listId={loaderData.listData.id} />}
+			{isUserListOwner && <DeleteListWidget listId={listData.id} />}
 
-			<ParticipantsWidget listData={loaderData.listData} user={loaderData.user} />
+			<ParticipantsWidget listData={listData} user={user} />
 		</div>
 	);
 }
