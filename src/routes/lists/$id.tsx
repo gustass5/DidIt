@@ -19,6 +19,7 @@ import {
 	CheckCircleIcon,
 	CircleStackIcon
 } from '@heroicons/react/24/outline';
+import { PlusCircleIcon } from '@heroicons/react/24/solid';
 import { InfoCard } from '~/components/InfoCard/InfoCard';
 import { UpdateTaskWidget } from '~/widgets/UpdateTaskWidget';
 import { DeleteListWidget } from '~/widgets/DeleteListWidget';
@@ -27,6 +28,7 @@ import { CreateTaskWidget } from '~/widgets/CreateTaskWidget';
 import { SetResponsibleWidget } from '~/widgets/SetResponsibleWidget';
 import { SetCompleteWidget } from '~/widgets/SetCompleteWidget';
 import { DeleteTaskWidget } from '~/widgets/DeleteTaskWidget';
+import { ResponsibleImage } from '~/components/ResponsibleImage/ResponsibleImage';
 
 export const loader = async ({ request, params }: LoaderArgs) => {
 	const user = await Session.isUserSessionValid(request);
@@ -120,13 +122,26 @@ export default function ListPage() {
 		const isUserTaskParticipant =
 			task.responsible[loaderData.user.id] !== undefined;
 
+		const taskResponsible = Object.values(task.responsible);
+
 		return (
 			<li
 				key={index}
 				className="flex justify-between items-center p-4 rounded text-[#9ba6b2] bg-[#191d2a]"
 			>
-				<span>{task.name}</span>
-				<div className="flex space-x-2">
+				<div className="flex -space-x-2 w-20 items-center">
+					<ResponsibleImage image={taskResponsible[0]?.image} />
+
+					<ResponsibleImage image={taskResponsible[1]?.image} />
+
+					{taskResponsible.length >= 3 && (
+						<PlusCircleIcon className="h-9 w-9 text-gray-700" />
+					)}
+				</div>
+
+				<span className="flex-1">{task.name}</span>
+
+				<div className="flex flex-1 space-x-2 justify-end">
 					{isUserTaskParticipant && (
 						<SetCompleteWidget task={task} user={loaderData.user} />
 					)}
@@ -181,6 +196,17 @@ export default function ListPage() {
 			</div>
 
 			<CreateTaskWidget />
+
+			<div className="flex items-center mt-6 p-4">
+				<div className="flex flex-1 justify-end">
+					<button
+						className="text-blue-400 border py-2 px-4 font-semibold rounded w-32 border-blue-400 text-sm"
+						onClick={() => setActionable(!actionable)}
+					>
+						{actionable ? 'HIDE' : 'SEE'} MORE ACTIONS
+					</button>
+				</div>
+			</div>
 
 			{tasks.length !== 0 ? (
 				<ul className="flex flex-col space-y-2 py-6">{tasks}</ul>
