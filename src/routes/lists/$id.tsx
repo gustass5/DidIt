@@ -166,28 +166,36 @@ export default function ListPage() {
 				<div className="flex flex-1 justify-between">
 					<Card
 						title="Total tasks"
-						data={12}
+						data={loaderData.tasks.length}
 						backgroundColorClass="bg-blue-400"
 						textColorClass="text-blue-400"
 						icon={CircleStackIcon}
 					/>
 					<Card
 						title="Tasks covered"
-						data={8}
+						data={
+							loaderData.tasks.filter(
+								task => Object.values(task.responsible).length > 0
+							).length
+						}
 						backgroundColorClass="bg-teal-400"
 						textColorClass="text-teal-400"
 						icon={StopCircleIcon}
 					/>
 					<Card
 						title="Completed"
-						data={4}
+						data={
+							loaderData.tasks.filter(
+								task => Object.values(task.completed).length > 0
+							).length
+						}
 						backgroundColorClass="bg-green-400"
 						textColorClass="text-green-400"
 						icon={CheckCircleIcon}
 					/>
 					<Card
 						title="Participants"
-						data={5}
+						data={Object.values(loaderData.listData.participants).length}
 						backgroundColorClass="bg-indigo-400"
 						textColorClass="text-indigo-400"
 						icon={UsersIcon}
