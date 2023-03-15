@@ -53,7 +53,12 @@ export const action = async ({ request }: ActionArgs) => {
 		return null;
 	}
 
-	const { listData, listSnapshot } = await getList(formData, user);
+	/**
+	 * To get list data, formData must contain list id
+	 */
+	formData.append('listId', invitation.list.id);
+
+	const { listData, listSnapshot } = await getList(formData, user, false);
 
 	if (listData.participants[user.id]) {
 		throw new Error('You are already part of the list');
