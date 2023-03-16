@@ -1,4 +1,5 @@
 import { Form } from '@remix-run/react';
+import { Button } from '~/components/Button/Button';
 
 export const CreateTaskWidget: React.FC = () => (
 	<Form
@@ -20,13 +21,8 @@ export const CreateTaskWidget: React.FC = () => (
 			/>
 		</div>
 
-		<button
-			name="action"
-			type="submit"
-			value="create"
-			className="font-semibold text-orange-400 border py-2 px-4 rounded w-32 border-orange-400"
-		>
+		<Button name="action" value="create" color="orange-400" className="w-32">
 			CREATE
-		</button>
+		</Button>
 	</Form>
 );

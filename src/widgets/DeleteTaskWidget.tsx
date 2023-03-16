@@ -1,4 +1,5 @@
 import { useFetcher } from '@remix-run/react';
+import { Button } from '~/components/Button/Button';
 import { TaskType } from '~/schema/Schema';
 
 export const DeleteTaskWidget: React.FC<{ task: TaskType }> = ({ task }) => {
@@ -7,14 +8,13 @@ export const DeleteTaskWidget: React.FC<{ task: TaskType }> = ({ task }) => {
 	return (
 		<deleteFetcher.Form method="post">
 			<input name="taskId" type="hidden" value={task.id} />
-			<button
+			<Button
 				name="action"
-				type="submit"
-				value="delete"
-				className="font-semibold text-[#F64668] border py-2 px-4 rounded w-24 border-[#F64668]"
+				color="#F64668"
+				className="text-[#F64668] border-[#F64668]"
 			>
 				DELETE
-			</button>
+			</Button>
 		</deleteFetcher.Form>
 	);
 };

@@ -29,6 +29,7 @@ import { SetResponsibleWidget } from '~/widgets/SetResponsibleWidget';
 import { SetCompleteWidget } from '~/widgets/SetCompleteWidget';
 import { DeleteTaskWidget } from '~/widgets/DeleteTaskWidget';
 import { ResponsibleImage } from '~/components/ResponsibleImage/ResponsibleImage';
+import { Button } from '~/components/Button/Button';
 
 export const loader = async ({ request, params }: LoaderArgs) => {
 	const user = await Session.isUserSessionValid(request);
@@ -206,12 +207,13 @@ export default function ListPage() {
 
 			<div className="flex items-center mt-6 p-4">
 				<div className="flex flex-1 justify-end">
-					<button
-						className="text-blue-400 border py-2 px-4 font-semibold rounded w-32 border-blue-400 text-sm"
+					<Button
 						onClick={() => setActionable(!actionable)}
+						color="blue-400"
+						className="w-32 text-sm"
 					>
 						{actionable ? 'HIDE' : 'SEE'} MORE ACTIONS
-					</button>
+					</Button>
 				</div>
 			</div>
 

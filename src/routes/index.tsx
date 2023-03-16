@@ -78,7 +78,7 @@ export default function Index() {
 				if (idToken === undefined) {
 					throw new Error('No id token was found');
 				}
-
+				// $$ Probably should use fetcher here?
 				submit({ idToken }, { method: 'post' });
 			} catch (error: any) {
 				// [TODO]: Implement error handling

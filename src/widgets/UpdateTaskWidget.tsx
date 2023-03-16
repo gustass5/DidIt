@@ -1,6 +1,7 @@
 import { Dialog } from '@headlessui/react';
 import { useFetcher } from '@remix-run/react';
 import { useState } from 'react';
+import { Button } from '~/components/Button/Button';
 import { TaskType } from '~/schema/Schema';
 
 export const UpdateTaskWidget: React.FC<{ task: TaskType }> = ({ task }) => {
@@ -10,12 +11,9 @@ export const UpdateTaskWidget: React.FC<{ task: TaskType }> = ({ task }) => {
 
 	return (
 		<>
-			<button
-				onClick={() => setIsOpen(true)}
-				className="font-semibold text-blue-400 border py-2 px-4 rounded w-24 border-blue-400"
-			>
+			<Button onClick={() => setIsOpen(true)} color="blue-400" className="w-24">
 				UPDATE
-			</button>
+			</Button>
 
 			<Dialog
 				open={isOpen}
