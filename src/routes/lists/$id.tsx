@@ -138,9 +138,9 @@ export default function ListPage() {
 					)}
 				</div>
 
-				<span className="flex-1">{task.name}</span>
+				<span className="flex flex-1 ">{task.name}</span>
 
-				<div className="flex flex-1 space-x-2 justify-end">
+				<div className="flex pl-6 space-x-2">
 					{isUserTaskParticipant && (
 						<SetCompleteWidget task={task} user={user} />
 					)}

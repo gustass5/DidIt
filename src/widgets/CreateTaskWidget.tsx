@@ -9,7 +9,7 @@ export const CreateTaskWidget: React.FC = () => (
 			<input
 				name="name"
 				type="text"
-				placeholder="Name"
+				placeholder="Task name"
 				className="bg-transparent outline-none"
 			/>
 			<input

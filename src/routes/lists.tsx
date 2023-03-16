@@ -114,19 +114,19 @@ export default function Dashboard() {
 	return (
 		<div className="h-full flex flex-col">
 			<div className="flex">
-				<div className="flex items-center w-[300px] p-2 bg-gray-800 h-24 text-orange-400">
+				<div className="flex items-center w-[300px] p-2 bg-gray-900 h-24 text-orange-400">
 					<Logo />
 					<span className="px-4 text-2xl font-semibold">DIDIT</span>
 				</div>
-				<div className="flex flex-1 bg-gray-800 items-center justify-end">
+				<div className="flex flex-1 bg-gray-900 items-center justify-end px-6">
 					<NotificationWidget user={loaderData.user} />
 
-					<UserMenu />
+					<UserMenu user={loaderData.user} />
 				</div>
 			</div>
 
 			<div className="flex flex-1">
-				<div className="flex flex-col w-[300px] bg-gray-800">
+				<div className="flex flex-col w-[300px] bg-gray-900">
 					<Form method="post">
 						<input name="name" type="text" placeholder="Name" />
 						<button name="action" type="submit" value="create">

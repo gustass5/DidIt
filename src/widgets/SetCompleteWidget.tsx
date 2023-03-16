@@ -21,7 +21,7 @@ export const SetCompleteWidget: React.FC<{ task: TaskType; user: UserType }> = (
 				value="complete"
 				disabled={!task.responsible[user.id]}
 			>
-				{task.completed[user.id] ? 'COMPLETED' : 'COMPLETE'}
+				{task.completed[user.id] ? 'UNSET' : 'COMPLETE'}
 			</button>
 		</completeFetcher.Form>
 	);
