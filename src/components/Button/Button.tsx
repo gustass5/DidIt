@@ -1,7 +1,6 @@
 export const Button: React.FC<{
 	name?: string;
 	onClick?: () => void;
-	color?: string;
 	value?: string;
 	className?: string;
 	type?: 'submit' | 'button' | 'reset';
@@ -10,7 +9,6 @@ export const Button: React.FC<{
 }> = ({
 	name = '',
 	onClick,
-	color = 'gray-400',
 	value,
 	className = '',
 	type = 'submit',
@@ -22,7 +20,7 @@ export const Button: React.FC<{
 		type={type}
 		value={value}
 		onClick={onClick}
-		className={`py-2 px-4 uppercase font-semibold text-${color} border border-${color} rounded ${className}`}
+		className={`py-2 px-4 uppercase font-semibold border rounded ${className}`}
 		disabled={disabled}
 	>
 		{children}

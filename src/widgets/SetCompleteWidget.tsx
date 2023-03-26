@@ -15,8 +15,11 @@ export const SetCompleteWidget: React.FC<{ task: TaskType; user: UserType }> = (
 			<Button
 				name="action"
 				value="complete"
-				color={task.completed[user.id] ? 'green-400' : 'indigo-400'}
-				className="w-32"
+				className={`w-32 ${
+					task.completed[user.id]
+						? 'text-green-400 border-green-400'
+						: 'text-indigo-400 border-indigo-400'
+				}`}
 				disabled={!task.responsible[user.id]}
 			>
 				{task.completed[user.id] ? 'UNSET' : 'COMPLETE'}

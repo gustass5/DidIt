@@ -11,7 +11,11 @@ export const SetResponsibleWidget: React.FC<{ task: TaskType; user: UserType }> 
 	return (
 		<responsibleFetcher.Form method="post">
 			<input name="taskId" type="hidden" value={task.id} />
-			<Button name="action" value="responsible" color="teal-400" className="w-32">
+			<Button
+				name="action"
+				value="responsible"
+				className="w-32 text-teal-400 border-teal-400"
+			>
 				{task.responsible[user.id] ? 'LEAVE' : 'JOIN'}
 			</Button>
 		</responsibleFetcher.Form>

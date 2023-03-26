@@ -21,7 +21,11 @@ export const CreateTaskWidget: React.FC = () => (
 			/>
 		</div>
 
-		<Button name="action" value="create" color="orange-400" className="w-32">
+		<Button
+			name="action"
+			value="create"
+			className="w-32 text-orange-400 border-orange-400"
+		>
 			CREATE
 		</Button>
 	</Form>
