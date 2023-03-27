@@ -9,7 +9,7 @@ import { deleteTask } from '~/controllers/task/deleteTask';
 import { toggleComplete } from '~/controllers/task/toggleComplete';
 import { toggleResponsible } from '~/controllers/task/toggleResponsible';
 import { updateTask } from '~/controllers/task/updateTask';
-import { TaskSchema, TaskType } from '~/schema/Schema';
+import { TaskSchema } from '~/schema/Schema';
 import { Session } from '~/sessions';
 import { ParticipantsWidget } from '~/widgets/ParticipantsWidget';
 import { UserInvitationWidget } from '~/widgets/UserInvitationWidet';
@@ -30,6 +30,7 @@ import { SetCompleteWidget } from '~/widgets/SetCompleteWidget';
 import { DeleteTaskWidget } from '~/widgets/DeleteTaskWidget';
 import { ResponsibleImage } from '~/components/ResponsibleImage/ResponsibleImage';
 import { Button } from '~/components/Button/Button';
+import { MoreActionsWidget } from '~/widgets/MoreActionsWidget';
 
 export const loader = async ({ request, params }: LoaderArgs) => {
 	const user = await Session.isUserSessionValid(request);
@@ -113,8 +114,6 @@ export const action = async ({ request, params }: ActionArgs) => {
 export default function ListPage() {
 	const { listData, tasks: listTasks, user } = useLoaderData<typeof loader>();
 
-	const [actionable, setActionable] = useState(false);
-
 	const isUserListOwner = listData.author_id === user.id;
 
 	const tasks = listTasks.map((task, index) => {
@@ -139,22 +138,26 @@ export default function ListPage() {
 					)}
 				</div>
 
-				<span className="flex flex-1 ">{task.name}</span>
+				<span className="flex flex-1">{task.name}</span>
 
-				<div className="flex pl-6 space-x-2">
+				<div className="flex space-x-2 pl-6">
 					{isUserTaskParticipant && (
 						<SetCompleteWidget task={task} user={user} />
 					)}
 
-					{(!isUserTaskParticipant || actionable) && (
-						<SetResponsibleWidget task={task} user={user} />
-					)}
+					<MoreActionsWidget>
+						<div className="flex flex-col space-y-1">
+							{!isUserTaskParticipant && (
+								<SetResponsibleWidget task={task} user={user} />
+							)}
 
-					{actionable && <UpdateTaskWidget task={task} />}
+							<UpdateTaskWidget task={task} />
 
-					{(isUserListOwner || isUserTaskCreator) && actionable && (
-						<DeleteTaskWidget task={task} />
-					)}
+							{(isUserListOwner || isUserTaskCreator) && (
+								<DeleteTaskWidget task={task} />
+							)}
+						</div>
+					</MoreActionsWidget>
 				</div>
 			</li>
 		);
@@ -203,33 +206,23 @@ export default function ListPage() {
 				</div>
 			</div>
 
-			<CreateTaskWidget />
+			<CreateTaskWidget>
+				<MoreActionsWidget>
+					<ParticipantsWidget listData={listData} user={user} />
 
-			<div className="flex items-center mt-6 p-4">
-				<div className="flex flex-1 justify-end">
-					<Button
-						onClick={() => setActionable(!actionable)}
-						color="blue-400"
-						className="w-32 text-sm"
-					>
-						{actionable ? 'HIDE' : 'SEE'} MORE ACTIONS
-					</Button>
-				</div>
-			</div>
+					<UserInvitationWidget listData={listData} />
+
+					{<LeaveListWidget listId={listData.id} />}
+
+					{isUserListOwner && <DeleteListWidget listId={listData.id} />}
+				</MoreActionsWidget>
+			</CreateTaskWidget>
 
 			{tasks.length !== 0 ? (
-				<ul className="flex flex-col space-y-2 py-6">{tasks}</ul>
+				<ul className="flex flex-col space-y-2 py-2">{tasks}</ul>
 			) : (
 				<span>No tasks yet</span>
 			)}
-
-			<UserInvitationWidget listData={listData} />
-
-			<LeaveListWidget listId={listData.id} />
-
-			{isUserListOwner && <DeleteListWidget listId={listData.id} />}
-
-			<ParticipantsWidget listData={listData} user={user} />
 		</div>
 	);
 }
