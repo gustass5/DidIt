@@ -1,6 +1,7 @@
 import { Dialog } from '@headlessui/react';
 import { useFetcher } from '@remix-run/react';
 import { useState } from 'react';
+import { Button } from '~/components/Button/Button';
 import { ListType, UserType } from '~/schema/Schema';
 
 export const ParticipantsWidget: React.FC<{
@@ -13,13 +14,15 @@ export const ParticipantsWidget: React.FC<{
 
 	return (
 		<>
-			<button
+			<Button
 				onClick={() => {
 					setIsOpen(true);
 				}}
+				className="w-40 text-sm text-blue-400 border-blue-400"
 			>
 				See participants
-			</button>
+			</Button>
+
 			<Dialog open={isOpen} onClose={() => setIsOpen(false)}>
 				<Dialog.Panel>
 					<Dialog.Title>List participants</Dialog.Title>

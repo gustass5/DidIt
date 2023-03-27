@@ -2,6 +2,7 @@ import { Combobox, Dialog } from '@headlessui/react';
 import { useFetcher } from '@remix-run/react';
 import { useState, useEffect } from 'react';
 import { z } from 'zod';
+import { Button } from '~/components/Button/Button';
 import {
 	InvitationSchema,
 	InvitationStatusEnum,
@@ -119,7 +120,12 @@ export const UserInvitationWidget: React.FC<{
 
 	return (
 		<>
-			<button onClick={() => setIsOpen(true)}>Invite users</button>
+			<Button
+				onClick={() => setIsOpen(true)}
+				className="w-32 text-sm text-indigo-400 border-indigo-400"
+			>
+				Invite users
+			</Button>
 			<Dialog
 				open={isOpen}
 				onClose={() => setIsOpen(false)}
