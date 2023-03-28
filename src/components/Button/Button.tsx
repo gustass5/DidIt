@@ -1,4 +1,4 @@
-export const Button: React.FC<{
+export interface ButtonInterface {
 	name?: string;
 	onClick?: () => void;
 	value?: string;
@@ -6,7 +6,9 @@ export const Button: React.FC<{
 	type?: 'submit' | 'button' | 'reset';
 	disabled?: boolean;
 	children?: React.ReactNode;
-}> = ({
+}
+
+export const Button: React.FC<ButtonInterface> = ({
 	name = '',
 	onClick,
 	value,
