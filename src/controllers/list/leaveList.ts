@@ -10,6 +10,10 @@ export const leaveList = async (formData: FormData, user: UserType) => {
 		throw new Error('You are not part of this list');
 	}
 
+	if (listData.author_id === user.id) {
+		throw new Error('You cannot leave list you created');
+	}
+
 	const { [user.id]: _, ...participants } = listData.participants;
 
 	const newListData = ListSchema.parse({
