@@ -8,6 +8,7 @@ import {
 	InvitationType
 } from '~/schema/Schema';
 import qs from 'qs';
+import { BellAlertIcon, BellIcon } from '@heroicons/react/24/outline';
 
 export const NotificationWidget: React.FC<{
 	user: UserType;
@@ -50,7 +51,16 @@ export const NotificationWidget: React.FC<{
 
 	return (
 		<Popover className="relative">
-			<Popover.Button>Notifications</Popover.Button>
+			<Popover.Button className="flex items-center justify-center mx-2 outline-none">
+				{invitations.length > 0 ? (
+					<div className="relative">
+						<BellAlertIcon className="h-8 w-8 text-gray-700" />
+						<div className="absolute top-0 right-0 rounded-full bg-amber-600 w-2 h-2"></div>
+					</div>
+				) : (
+					<BellIcon className="h-8 w-8 text-gray-700" />
+				)}
+			</Popover.Button>
 
 			<Popover.Panel className="absolute z-10">
 				{invitations.map((invitation, index) => (
