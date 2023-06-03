@@ -14,7 +14,7 @@ export const SetResponsibleWidget: React.FC<{ task: TaskType; user: UserType }> 
 			<Button
 				name="action"
 				value="responsible"
-				className="w-32 text-teal-400 border-teal-400"
+				className="w-full text-teal-400 border-teal-400"
 			>
 				{task.responsible[user.id] ? 'LEAVE' : 'JOIN'}
 			</Button>

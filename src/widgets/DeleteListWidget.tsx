@@ -8,7 +8,7 @@ export const DeleteListWidget: React.FC<{ listId?: string }> = ({ listId }) => (
 		<Button
 			name="action"
 			value="delete"
-			className="w-32 text-sm text-[#F64668] border-[#F64668]"
+			className="w-full text-sm text-[#F64668] border-[#F64668]"
 		>
 			Delete list
 		</Button>

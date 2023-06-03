@@ -8,7 +8,7 @@ export const LeaveListWidget: React.FC<{ listId?: string }> = ({ listId }) => (
 		<Button
 			name="action"
 			value="leave"
-			className="w-32 text-sm text-teal-400 border-teal-400"
+			className="w-full text-sm text-teal-400 border-teal-400"
 		>
 			Leave list
 		</Button>

@@ -164,6 +164,7 @@ export default function ListPage() {
 			</li>
 		);
 	});
+
 	return (
 		<div className="flex flex-col p-6">
 			<div className="flex space-x-6">
@@ -209,12 +210,12 @@ export default function ListPage() {
 			</div>
 
 			<CreateTaskWidget>
-				<MoreActionsWidget>
+				<MoreActionsWidget title="List actions">
 					<ParticipantsWidget listData={listData} user={user} />
 
 					<UserInvitationWidget listData={listData} />
 
-					{<LeaveListWidget listId={listData.id} />}
+					{!isUserListOwner && <LeaveListWidget listId={listData.id} />}
 
 					{isUserListOwner && <DeleteListWidget listId={listData.id} />}
 				</MoreActionsWidget>

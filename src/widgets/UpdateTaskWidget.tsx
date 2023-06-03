@@ -13,7 +13,7 @@ export const UpdateTaskWidget: React.FC<{ task: TaskType }> = ({ task }) => {
 		<>
 			<Button
 				onClick={() => setIsOpen(true)}
-				className="w-24 text-blue-400 border-blue-400"
+				className="w-full text-blue-400 border-blue-400"
 			>
 				UPDATE
 			</Button>

@@ -122,7 +122,7 @@ export const UserInvitationWidget: React.FC<{
 		<>
 			<Button
 				onClick={() => setIsOpen(true)}
-				className="w-32 text-sm text-indigo-400 border-indigo-400"
+				className="text-sm text-indigo-400 border-indigo-400"
 			>
 				Invite users
 			</Button>
