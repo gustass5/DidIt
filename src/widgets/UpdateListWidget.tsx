@@ -1,4 +1,5 @@
 import { Dialog } from '@headlessui/react';
+import { PencilSquareIcon } from '@heroicons/react/24/outline';
 import { useFetcher } from '@remix-run/react';
 import { useState } from 'react';
 import { ListType } from '~/schema/Schema';
@@ -10,7 +11,9 @@ export const UpdateListWidget: React.FC<{ list: ListType }> = ({ list }) => {
 
 	return (
 		<>
-			<button onClick={() => setIsOpen(true)}>UPDATE</button>
+			<button onClick={() => setIsOpen(true)}>
+				<PencilSquareIcon className="h-6 w-6 text-gray-300" />
+			</button>
 
 			<Dialog
 				open={isOpen}

@@ -4,7 +4,6 @@ import { Session } from '~/sessions';
 import { FirebaseServer } from '~/firebase/server/firebase.server';
 import { ListSchema } from '~/schema/Schema';
 import { Form, Outlet, useLoaderData } from '@remix-run/react';
-import {} from '@headlessui/react';
 import { z } from 'zod';
 import { createList } from '~/controllers/list/createList';
 import { updateList } from '~/controllers/list/updateList';
@@ -17,6 +16,7 @@ import { ListItem } from '~/components/ListItem/ListItem';
 import { UpdateListWidget } from '~/widgets/UpdateListWidget';
 import { UserMenu } from '~/components/UserMenu/UserMenu';
 import { Logo } from '~/components/Logo/Logo';
+import { Button } from '~/components/Button/Button';
 
 export const loader = async ({ request }: LoaderArgs) => {
 	const user = await Session.isUserSessionValid(request);
@@ -132,15 +132,33 @@ export default function Dashboard() {
 			</div>
 
 			<div className="flex flex-1">
-				<div className="flex flex-col w-[300px] bg-gray-900">
+				<div className="flex flex-col w-[300px] p-4 text-gray-400 bg-gray-900">
+					<div className="font-semibold text-sm pt-8 pb-2 uppercase">
+						Create new list
+					</div>
+
 					<Form method="post">
-						<input name="name" type="text" placeholder="Name" />
-						<button name="action" type="submit" value="create">
-							Create
-						</button>
+						<input
+							name="name"
+							type="text"
+							placeholder="List name"
+							className="bg-transparent outline-none py-4"
+						/>
+
+						<Button
+							name="action"
+							value="create"
+							className="w-full text-orange-400 border-orange-400"
+						>
+							CREATE
+						</Button>
 					</Form>
 
-					<ul className="flex flex-col p-2 space-y-2">{lists}</ul>
+					<div className="font-semibold text-sm pt-6 pb-4 uppercase">
+						Lists
+					</div>
+
+					<ul className="flex flex-col space-y-2">{lists}</ul>
 				</div>
 
 				<div className="flex-1">

@@ -5,9 +5,11 @@ export const ListItem: React.FC<{ list: ListType; children?: React.ReactNode }> 
 	list,
 	children
 }) => (
-	<li className="p-1 rounded text-gray-300 font-medium text-gray-400 hover:bg-[#15181f]">
-		<span>
-			<Link to={`${list.id}`}>{list.name}</Link>
+	<li className="flex items-center justify-between rounded font-medium text-gray-300">
+		<span className="flex flex-1">
+			<Link className="flex flex-1 py-2" to={`${list.id}`}>
+				{list.name}
+			</Link>
 		</span>
 		{children}
 	</li>
