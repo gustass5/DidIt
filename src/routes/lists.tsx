@@ -118,10 +118,16 @@ export default function Dashboard() {
 					<Logo />
 					<span className="px-4 text-2xl font-semibold">DIDIT</span>
 				</div>
-				<div className="flex flex-1 bg-gray-900 items-center justify-end px-6">
-					<NotificationWidget user={loaderData.user} />
+				<div className="flex flex-1 bg-gray-950 items-center justify-between px-6">
+					<div className="px-4 text-orange-400 text-3xl font-semibold uppercase">
+						Dashboard
+					</div>
 
-					<UserMenu user={loaderData.user} />
+					<div className="flex items-center justify-center">
+						<NotificationWidget user={loaderData.user} />
+
+						<UserMenu user={loaderData.user} />
+					</div>
 				</div>
 			</div>
 
