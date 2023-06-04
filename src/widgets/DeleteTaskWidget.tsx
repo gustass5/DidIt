@@ -8,7 +8,7 @@ export const DeleteTaskWidget: React.FC<{ task: TaskType }> = ({ task }) => {
 	return (
 		<deleteFetcher.Form method="post">
 			<input name="taskId" type="hidden" value={task.id} />
-			<Button name="action" className="w-full text-[#F64668] border-[#F64668]">
+			<Button name="action" className="w-full  text-[#F64668] border-[#F64668]">
 				DELETE
 			</Button>
 		</deleteFetcher.Form>

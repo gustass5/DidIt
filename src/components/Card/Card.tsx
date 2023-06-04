@@ -7,11 +7,11 @@ export const Card: React.FC<{
 }> = ({ title, data, icon, backgroundColorClass = '', textColorClass = '' }) => {
 	const Icon = icon;
 	return (
-		<div className="flex items-center h-32 rounded bg-[#191d2a]">
+		<div className="flex items-center h-32 rounded bg-gray-900">
 			<div
 				className={`flex items-center justify-center h-full w-1/3 ${backgroundColorClass} rounded-l`}
 			>
-				<Icon className="w-1/2 text-[#111319]" />
+				<Icon className="w-1/2 text-gray-900" />
 			</div>
 
 			<div className={`flex flex-col flex-1 space-y-3 ${textColorClass}`}>

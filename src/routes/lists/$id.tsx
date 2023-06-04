@@ -126,7 +126,7 @@ export default function ListPage() {
 		return (
 			<li
 				key={index}
-				className="flex justify-between items-center p-4 rounded text-[#9ba6b2] bg-[#191d2a]"
+				className="flex justify-between items-center p-4 rounded text-gray-400 bg-gray-900"
 			>
 				<div className="flex -space-x-2 w-20 items-center">
 					<ResponsibleImage image={taskResponsible[0]?.image} />
