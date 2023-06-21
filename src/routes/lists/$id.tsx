@@ -151,7 +151,9 @@ export default function ListPage() {
 
 					<MoreActionsWidget>
 						<div className="flex flex-col space-y-4">
-							<SetResponsibleWidget task={task} user={user} />
+							{isUserTaskParticipant && (
+								<SetResponsibleWidget task={task} user={user} />
+							)}
 
 							<UpdateTaskWidget task={task} />
 
