@@ -22,7 +22,7 @@ export const Button: React.FC<ButtonInterface> = ({
 		type={type}
 		value={value}
 		onClick={onClick}
-		className={`py-2 px-4 uppercase font-semibold border rounded ${className}`}
+		className={`py-2 uppercase font-semibold border rounded ${className}`}
 		disabled={disabled}
 	>
 		{children}
