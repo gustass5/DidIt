@@ -226,7 +226,9 @@ export default function ListPage() {
 			{tasks.length !== 0 ? (
 				<ul className="flex flex-col space-y-2 py-2">{tasks}</ul>
 			) : (
-				<span>No tasks yet</span>
+				<span className="px-4 text-gray-400 text-sm text-center">
+					No tasks yet
+				</span>
 			)}
 		</div>
 	);
