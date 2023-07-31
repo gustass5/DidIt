@@ -64,7 +64,7 @@ export default function App() {
 				<link rel="manifest" href="/resources/manifest.webmanifest" />
 				<Links />
 			</head>
-			<body className="h-screen bg-gray-950">
+			<body className="flex h-screen bg-gray-950">
 				<Outlet />
 				<ScrollRestoration />
 				<Scripts />

@@ -17,7 +17,8 @@ import {
 	UsersIcon,
 	StopCircleIcon,
 	CheckCircleIcon,
-	CircleStackIcon
+	CircleStackIcon,
+	UserCircleIcon
 } from '@heroicons/react/24/outline';
 import { PlusCircleIcon } from '@heroicons/react/24/solid';
 import { InfoCard } from '~/components/InfoCard/InfoCard';
@@ -123,22 +124,38 @@ export default function ListPage() {
 
 		const taskResponsible = Object.values(task.responsible);
 
+		const getBorderColor = () => {
+			if (Object.values(task.completed).includes(true)) {
+				return 'border-green-400';
+			}
+
+			if (taskResponsible.length !== 0) {
+				return 'border-indigo-400';
+			}
+
+			return 'border-gray-400';
+		};
+
 		return (
 			<li
 				key={index}
-				className="flex justify-between items-center p-4 rounded text-gray-400 bg-gray-900"
+				className={`flex justify-between items-center p-4 rounded text-gray-400 bg-gray-900 border ${getBorderColor()}`}
 			>
-				<div className="flex -space-x-2 w-20 items-center">
+				<div className="flex flex-col xl:flex-row -space-y-2 xl:-space-y-0 xl:-space-x-2 w-20 items-center">
 					<ResponsibleImage image={taskResponsible[0]?.image} />
 
 					<ResponsibleImage image={taskResponsible[1]?.image} />
 
+					{taskResponsible.length <= 0 && (
+						<UserCircleIcon className="h-9 w-9 text-gray-400" />
+					)}
+
 					{taskResponsible.length >= 3 && (
-						<PlusCircleIcon className="h-9 w-9 text-gray-700" />
+						<PlusCircleIcon className="h-9 w-9 text-gray-400" />
 					)}
 				</div>
 
-				<span className="flex flex-1">{task.name}</span>
+				<span className="flex flex-1 text-3xl xl:text-base">{task.name}</span>
 
 				<div className="flex space-x-2 pl-6">
 					{isUserTaskParticipant && (
@@ -169,14 +186,15 @@ export default function ListPage() {
 
 	return (
 		<div className="flex flex-col p-6">
-			<div className="flex space-x-6">
+			<div className="flex flex-col-reverse xl:flex-row space-y-6 space-y-reverse xl:space-y-0 xl:space-x-6">
 				<InfoCard list={listData} />
-				<div className="flex flex-1 justify-between space-x-6">
+				<div className="flex items-center flex-1 space-x-6">
 					<Card
 						title="Total tasks"
 						data={listTasks.length}
 						backgroundColorClass="bg-blue-400"
 						textColorClass="text-blue-400"
+						borderColorClass="border-blue-400"
 						icon={CircleStackIcon}
 					/>
 					<Card
@@ -188,6 +206,7 @@ export default function ListPage() {
 						}
 						backgroundColorClass="bg-teal-400"
 						textColorClass="text-teal-400"
+						borderColorClass="border-teal-400"
 						icon={StopCircleIcon}
 					/>
 					<Card
@@ -199,6 +218,7 @@ export default function ListPage() {
 						}
 						backgroundColorClass="bg-green-400"
 						textColorClass="text-green-400"
+						borderColorClass="border-green-400"
 						icon={CheckCircleIcon}
 					/>
 					<Card
@@ -206,6 +226,7 @@ export default function ListPage() {
 						data={Object.values(listData.participants).length}
 						backgroundColorClass="bg-indigo-400"
 						textColorClass="text-indigo-400"
+						borderColorClass="border-indigo-400"
 						icon={UsersIcon}
 					/>
 				</div>
@@ -224,7 +245,7 @@ export default function ListPage() {
 			</CreateTaskWidget>
 
 			{tasks.length !== 0 ? (
-				<ul className="flex flex-col space-y-2 py-2">{tasks}</ul>
+				<ul className="flex flex-col space-y-4 xl:space-y-2 py-2">{tasks}</ul>
 			) : (
 				<span className="px-4 text-gray-400 text-sm text-center">
 					No tasks yet

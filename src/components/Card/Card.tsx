@@ -4,12 +4,22 @@ export const Card: React.FC<{
 	icon: React.ForwardRefExoticComponent<React.SVGProps<SVGSVGElement>>;
 	backgroundColorClass?: string;
 	textColorClass?: string;
-}> = ({ title, data, icon, backgroundColorClass = '', textColorClass = '' }) => {
+	borderColorClass?: string;
+}> = ({
+	title,
+	data,
+	icon,
+	backgroundColorClass = '',
+	textColorClass = '',
+	borderColorClass = ''
+}) => {
 	const Icon = icon;
 	return (
-		<div className="flex items-center h-32 rounded bg-gray-900">
+		<div
+			className={`flex items-center h-36 rounded bg-gray-900 w-full border ${borderColorClass}`}
+		>
 			<div
-				className={`flex items-center justify-center h-full w-1/3 ${backgroundColorClass} rounded-l`}
+				className={`items-center justify-center h-full w-1/3 ${backgroundColorClass} rounded-l hidden xl:flex`}
 			>
 				<Icon className="w-1/2 text-gray-900" />
 			</div>

@@ -1,7 +1,7 @@
 import { ListType } from '~/schema/Schema';
 
 export const InfoCard: React.FC<{ list: ListType }> = ({ list }) => (
-	<div className="flex items-center h-32 w-96 rounded bg-gray-900 p-4 text-gray-400">
+	<div className="flex items-center h-36 w-full xl:w-96 rounded bg-gray-900 p-4 text-gray-400 border border-orange-400">
 		<div className="flex flex-col flex-1">
 			<div className="pb-4 text-2xl font-semibold uppercase text-orange-400">
 				{list.name}

@@ -55,15 +55,15 @@ export const NotificationWidget: React.FC<{
 			<Popover.Button className="flex items-center justify-center mx-2 outline-none">
 				{invitations.length > 0 ? (
 					<div className="relative">
-						<BellAlertIcon className="h-8 w-8 text-gray-400" />
+						<BellAlertIcon className="h-10 w-10 text-gray-400" />
 						<div className="absolute top-0 right-0 rounded-full bg-amber-600 w-2 h-2"></div>
 					</div>
 				) : (
-					<BellIcon className="h-8 w-8 text-gray-400" />
+					<BellIcon className="h-10 w-10 text-gray-400" />
 				)}
 			</Popover.Button>
 
-			<Popover.Panel className="flex flex-col space-y-6 p-4 m-4 absolute z-10 right-0 rounded bg-gray-900 border-2 border-gray-600">
+			<Popover.Panel className="flex flex-col space-y-6 p-4 m-6 absolute z-10 right-0 rounded bg-gray-900 border-2 border-gray-600">
 				{invitations.map((invitation, index) => (
 					<div key={index} className="text-gray-400">
 						<div className="pb-2">

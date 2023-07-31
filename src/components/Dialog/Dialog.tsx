@@ -23,7 +23,7 @@ export const Dialog: React.FC<{
 			>
 				<div className="fixed inset-0 bg-black/30" aria-hidden="true" />
 				<div className="fixed inset-0 flex items-center justify-center p-4">
-					<HeadlessDialog.Panel className="w-full max-w-xl rounded bg-gray-900 border-2 border-gray-600">
+					<HeadlessDialog.Panel className="w-full xl:max-w-xl rounded bg-gray-900 border-2 border-gray-600">
 						<div className="bg-[#111319] rounded p-6 space-y-2">
 							<HeadlessDialog.Title className="text-xl font-semibold text-orange-400 uppercase shadow">
 								{title}

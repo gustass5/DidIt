@@ -4,7 +4,7 @@ import { Button } from '~/components/Button/Button';
 export const CreateTaskWidget: React.FC<{ children?: React.ReactNode }> = ({
 	children
 }) => (
-	<div className="flex space-x-2 p-4 my-6 rounded text-gray-400 bg-gray-900">
+	<div className="flex space-x-2 p-4 my-6 rounded text-gray-400 bg-gray-900 border border-orange-400">
 		<Form method="post" className="flex flex-1 justify-between">
 			<div className="flex space-x-3">
 				<input

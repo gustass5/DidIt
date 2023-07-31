@@ -114,15 +114,13 @@ export default function Dashboard() {
 	return (
 		<div className="h-full flex flex-col">
 			<div className="flex">
-				<div className="flex items-center w-[300px] p-2 bg-gray-900 h-24 text-orange-400">
-					<Logo />
-					<span className="px-4 text-2xl font-semibold">DIDIT</span>
-				</div>
-				<div className="flex flex-1 bg-gray-950 items-center justify-between px-6">
-					<div className="px-4 text-orange-400 text-3xl font-semibold uppercase">
-						Dashboard
+				<a href="/lists">
+					<div className="flex items-center w-[300px] p-6 xl:p-2 bg-gray-950 xl:bg-gray-900 h-24 text-orange-400">
+						<Logo />
+						<span className="px-4 text-2xl font-semibold">DIDIT</span>
 					</div>
-
+				</a>
+				<div className="flex flex-1 bg-gray-950 items-center justify-end px-6">
 					<div className="flex items-center justify-center">
 						<NotificationWidget user={loaderData.user} />
 
@@ -132,7 +130,7 @@ export default function Dashboard() {
 			</div>
 
 			<div className="flex flex-1">
-				<div className="flex flex-col w-[300px] p-4 text-gray-400 bg-gray-900">
+				<div className="flex-col w-[300px] p-4 text-gray-400 bg-gray-900 hidden xl:flex">
 					<div className="font-semibold text-sm pt-8 pb-2 uppercase">
 						Create new list
 					</div>
