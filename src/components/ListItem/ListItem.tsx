@@ -7,9 +7,9 @@ export const ListItem: React.FC<{ list: ListType; children?: React.ReactNode }> 
 }) => (
 	<li className="flex items-center justify-between rounded font-medium text-gray-300">
 		<span className="flex flex-1">
-			<Link className="flex flex-1 py-2" to={`${list.id}`}>
+			<a className="flex flex-1 py-2" href={`/lists/${list.id}`}>
 				{list.name}
-			</Link>
+			</a>
 		</span>
 		{children}
 	</li>

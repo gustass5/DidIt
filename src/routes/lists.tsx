@@ -18,7 +18,7 @@ import { UserMenu } from '~/components/UserMenu/UserMenu';
 import { Logo } from '~/components/Logo/Logo';
 import { Button } from '~/components/Button/Button';
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request, params }: LoaderArgs) => {
 	const user = await Session.isUserSessionValid(request);
 
 	if (!user) {
@@ -35,7 +35,7 @@ export const loader = async ({ request }: LoaderArgs) => {
 		ListSchema.parse({ id: doc.id, ...doc.data() })
 	);
 
-	return json({ lists: listsDocuments, user });
+	return json({ lists: listsDocuments, listId: params.id, user });
 };
 
 const ListActionSchema = z.union(
@@ -112,7 +112,7 @@ export default function Dashboard() {
 	));
 
 	return (
-		<div className="h-full flex flex-col">
+		<div className="h-full flex flex-col w-full">
 			<div className="flex">
 				<a href="/lists">
 					<div className="flex items-center w-[300px] p-6 xl:p-2 bg-gray-950 xl:bg-gray-900 h-24 text-orange-400">
@@ -130,7 +130,11 @@ export default function Dashboard() {
 			</div>
 
 			<div className="flex flex-1">
-				<div className="flex-col w-[300px] p-4 text-gray-400 bg-gray-900 hidden xl:flex">
+				<div
+					className={`flex-col ${
+						loaderData.listId ? 'w-[300px] hidden' : 'w-full flex'
+					} p-4 text-gray-400 bg-gray-900 xl:flex`}
+				>
 					<div className="font-semibold text-sm pt-8 pb-2 uppercase">
 						Create new list
 					</div>
@@ -159,9 +163,11 @@ export default function Dashboard() {
 					<ul className="flex flex-col space-y-2">{lists}</ul>
 				</div>
 
-				<div className="flex-1">
-					<Outlet />
-				</div>
+				{loaderData.listId && (
+					<div className="flex-1">
+						<Outlet />
+					</div>
+				)}
 			</div>
 		</div>
 	);
