@@ -21,7 +21,10 @@ export const Dialog: React.FC<{
 				onClose={() => setIsOpen(false)}
 				className="relative z-50"
 			>
-				<div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+				<div
+					className="fixed inset-0 bg-black/50 backdrop-blur"
+					aria-hidden="true"
+				/>
 				<div className="fixed inset-0 flex items-center justify-center p-4">
 					<HeadlessDialog.Panel className="w-full xl:max-w-xl rounded bg-gray-900 border-2 border-gray-600">
 						<div className="bg-[#111319] rounded p-6 space-y-2">
