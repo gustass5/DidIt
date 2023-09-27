@@ -113,14 +113,14 @@ export default function Dashboard() {
 
 	return (
 		<div className="h-full flex flex-col w-full">
-			<div className="flex">
+			<div className="flex justify-between">
 				<a href="/lists">
-					<div className="flex items-center w-[300px] p-6 xl:p-2 bg-gray-950 xl:bg-gray-900 h-24 text-orange-400">
+					<div className="flex items-center xl:w-[300px] px-2 py-6 xl:p-2 bg-gray-950 xl:bg-gray-900 h-24 text-orange-400">
 						<Logo />
 						<span className="px-4 text-2xl font-semibold">DIDIT</span>
 					</div>
 				</a>
-				<div className="flex flex-1 bg-gray-950 items-center justify-end px-6">
+				<div className="flex flex-1 bg-gray-950 items-center justify-end px-2 xl:px-6">
 					<div className="flex items-center justify-center">
 						<NotificationWidget user={loaderData.user} />
 
@@ -160,7 +160,7 @@ export default function Dashboard() {
 						Lists
 					</div>
 
-					<ul className="flex flex-col space-y-2">{lists}</ul>
+					<ul className="flex flex-col">{lists}</ul>
 				</div>
 
 				{loaderData.listId && (

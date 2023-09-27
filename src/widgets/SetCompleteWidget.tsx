@@ -15,7 +15,7 @@ export const SetCompleteWidget: React.FC<{ task: TaskType; user: UserType }> = (
 			<Button
 				name="action"
 				value="complete"
-				className={`w-32 ${
+				className={`w-full px-4 xl:w-32 ${
 					task.completed[user.id]
 						? 'text-green-400 border-green-400'
 						: 'text-indigo-400 border-indigo-400'

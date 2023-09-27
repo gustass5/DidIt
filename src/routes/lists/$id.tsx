@@ -136,6 +136,16 @@ export default function ListPage() {
 			return 'border-gray-400';
 		};
 
+		const participantsButtons = (
+			<>
+				{isUserTaskParticipant && <SetCompleteWidget task={task} user={user} />}
+
+				{!isUserTaskParticipant && (
+					<SetResponsibleWidget task={task} user={user} />
+				)}
+			</>
+		);
+
 		return (
 			<li
 				key={index}
@@ -155,22 +165,17 @@ export default function ListPage() {
 					)}
 				</div>
 
-				<span className="flex flex-1 text-3xl xl:text-base">{task.name}</span>
+				<span className="flex flex-1 text-sm xl:text-base">{task.name}</span>
 
 				<div className="flex space-x-2 pl-6">
-					{isUserTaskParticipant && (
-						<SetCompleteWidget task={task} user={user} />
-					)}
-
-					{!isUserTaskParticipant && (
-						<SetResponsibleWidget task={task} user={user} />
-					)}
-
+					<div className="hidden xl:block">{participantsButtons}</div>
 					<MoreActionsWidget>
 						<div className="flex flex-col space-y-4">
 							{isUserTaskParticipant && (
 								<SetResponsibleWidget task={task} user={user} />
 							)}
+
+							<div className="block xl:hidden">{participantsButtons}</div>
 
 							<UpdateTaskWidget task={task} />
 
@@ -185,10 +190,10 @@ export default function ListPage() {
 	});
 
 	return (
-		<div className="flex flex-col p-6">
-			<div className="flex flex-col-reverse xl:flex-row space-y-6 space-y-reverse xl:space-y-0 xl:space-x-6">
+		<div className="flex flex-col p-2 xl:p-6">
+			<div className="flex flex-col xl:flex-row space-y-4 xl:space-y-0 xl:space-x-4">
 				<InfoCard list={listData} />
-				<div className="flex items-center flex-1 space-x-6">
+				<div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
 					<Card
 						title="Total tasks"
 						data={listTasks.length}
