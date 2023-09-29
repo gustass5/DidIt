@@ -35,7 +35,14 @@ export const Dialog: React.FC<{
 								{description}
 							</HeadlessDialog.Description>
 						</div>
-						<div className="p-6">{children}</div>
+						<div
+							onSubmit={() => {
+								setIsOpen(false);
+							}}
+							className="p-6"
+						>
+							{children}
+						</div>
 					</HeadlessDialog.Panel>
 				</div>
 			</HeadlessDialog>
