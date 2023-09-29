@@ -5,6 +5,7 @@ export interface ButtonInterface {
 	className?: string;
 	type?: 'submit' | 'button' | 'reset';
 	disabled?: boolean;
+	form?: string;
 	children?: React.ReactNode;
 }
 
@@ -15,9 +16,11 @@ export const Button: React.FC<ButtonInterface> = ({
 	className = '',
 	type = 'submit',
 	disabled = false,
+	form,
 	children
 }) => (
 	<button
+		form={form}
 		name={name}
 		type={type}
 		value={value}
