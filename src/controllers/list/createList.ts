@@ -1,6 +1,8 @@
 import { FirebaseServer } from '~/firebase/server/firebase.server';
 import { ListSchema, UserType } from '~/schema/Schema';
 
+import { json } from '@remix-run/node';
+
 export const createList = async (formData: FormData, user: UserType) => {
 	const name = formData.get('name');
 
@@ -23,4 +25,8 @@ export const createList = async (formData: FormData, user: UserType) => {
 	});
 
 	await FirebaseServer.database.collection('lists').add(newList);
+
+	return json({
+		notification: { type: 'success', title: 'Success', text: 'List created' }
+	});
 };

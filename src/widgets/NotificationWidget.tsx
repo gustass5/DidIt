@@ -1,5 +1,5 @@
 import { Popover } from '@headlessui/react';
-import { useFetcher } from '@remix-run/react';
+import { Form, useFetcher } from '@remix-run/react';
 import { useEffect, useState } from 'react';
 import {
 	InvitationSchema,
@@ -10,15 +10,12 @@ import {
 import qs from 'qs';
 import { BellAlertIcon, BellIcon } from '@heroicons/react/24/outline';
 import { Button } from '~/components/Button/Button';
+import { Alert } from '~/components/Alert/Alert';
 
 export const NotificationWidget: React.FC<{
 	user: UserType;
 }> = ({ user }) => {
 	const invitationsFetcher = useFetcher();
-
-	const acceptInvitationFetcher = useFetcher();
-
-	const declineInvitationFetcher = useFetcher();
 
 	const [invitations, setInvitations] = useState<InvitationType[]>([]);
 
@@ -39,8 +36,24 @@ export const NotificationWidget: React.FC<{
 			return;
 		}
 
+		if (!invitationsFetcher.data.success) {
+			Alert.fire({
+				icon: 'error',
+				title: 'Error',
+				text: invitationsFetcher.data.error
+			});
+
+			return;
+		}
+
 		if (invitationsFetcher.data?.invitations == undefined) {
-			throw new Error('Unable to retrieve invitations');
+			Alert.fire({
+				icon: 'error',
+				title: 'Error',
+				text: 'Unable to retrieve invitations'
+			});
+
+			return;
 		}
 
 		const invitations = Array.from(invitationsFetcher.data.invitations).map(
@@ -64,8 +77,8 @@ export const NotificationWidget: React.FC<{
 			</Popover.Button>
 
 			<Popover.Panel className="flex flex-col space-y-6 p-4 m-6 absolute z-10 right-0 rounded bg-gray-900 border-2 border-gray-600">
-				{invitations.map((invitation, index) => (
-					<div key={index} className="text-gray-400">
+				{invitations.map(invitation => (
+					<div key={invitation.id} className="text-gray-400">
 						<div className="pb-2">
 							<div>
 								You have been invited to join
@@ -83,7 +96,7 @@ export const NotificationWidget: React.FC<{
 							</div>
 						</div>
 						<div className="flex w-full space-x-2">
-							<acceptInvitationFetcher.Form
+							<Form
 								method="post"
 								action="/api/invitations/handle"
 								className="w-full"
@@ -100,9 +113,9 @@ export const NotificationWidget: React.FC<{
 								>
 									Accept
 								</Button>
-							</acceptInvitationFetcher.Form>
+							</Form>
 
-							<declineInvitationFetcher.Form
+							<Form
 								method="post"
 								action="/api/invitations/handle"
 								className="w-full"
@@ -120,7 +133,7 @@ export const NotificationWidget: React.FC<{
 								>
 									Decline
 								</Button>
-							</declineInvitationFetcher.Form>
+							</Form>
 						</div>
 					</div>
 				))}

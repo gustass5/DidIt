@@ -1,3 +1,39 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.colored-toast {
+	background-color: #111827 !important;
+	border: 1px solid !important;
+	border-radius: 0.25rem !important;
+}
+
+.colored-toast.swal2-icon-success {
+	border-color: #4ade80 !important;
+	color: #4ade80 !important;
+}
+
+.colored-toast.swal2-icon-error {
+	border-color: #f64668 !important;
+	color: #f64668 !important;
+}
+
+.colored-toast.swal2-icon-warning {
+	border-color: #2dd4bf !important;
+	color: #2dd4bf !important;
+}
+
+.colored-toast.swal2-icon-info {
+	border-color: #60a5fa !important;
+	color: #60a5fa !important;
+}
+
+.colored-toast.swal2-icon-question {
+	border-color: #87adbd !important;
+	color: #87adbd !important;
+}
+
+.colored-toast .swal2-title {
+	font-size: 1.5rem !important;
+	margin: 0.25rem 1rem !important;
+}

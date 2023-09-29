@@ -4,7 +4,7 @@ import { Session } from '~/sessions';
 import { FirebaseServer } from '~/firebase/server/firebase.server';
 import { ListSchema } from '~/schema/Schema';
 import { Form, Outlet, useLoaderData } from '@remix-run/react';
-import { z } from 'zod';
+import { ZodError, z } from 'zod';
 import { createList } from '~/controllers/list/createList';
 import { updateList } from '~/controllers/list/updateList';
 import { inviteUsers } from '~/controllers/list/inviteUsers';
@@ -17,25 +17,31 @@ import { UpdateListWidget } from '~/widgets/UpdateListWidget';
 import { UserMenu } from '~/components/UserMenu/UserMenu';
 import { Logo } from '~/components/Logo/Logo';
 import { Button } from '~/components/Button/Button';
+import { useAlerts } from '~/components/Alert/useAlerts';
+import { ActionError } from '~/errors/ActionError';
 
 export const loader = async ({ request, params }: LoaderArgs) => {
-	const user = await Session.isUserSessionValid(request);
+	try {
+		const user = await Session.isUserSessionValid(request);
 
-	if (!user) {
-		return redirect('/');
+		if (!user) {
+			return redirect('/');
+		}
+
+		const listsSnapshot = await FirebaseServer.database
+			.collection('lists')
+			.where('deleted', '==', false)
+			.where(`participants.${user.id}.id`, '==', user.id)
+			.get();
+
+		const listsDocuments = listsSnapshot.docs.map(doc =>
+			ListSchema.parse({ id: doc.id, ...doc.data() })
+		);
+
+		return json({ lists: listsDocuments, listId: params.id, user });
+	} catch (error: unknown) {
+		throw new Error('Unexpected error happened');
 	}
-
-	const listsSnapshot = await FirebaseServer.database
-		.collection('lists')
-		.where('deleted', '==', false)
-		.where(`participants.${user.id}.id`, '==', user.id)
-		.get();
-
-	const listsDocuments = listsSnapshot.docs.map(doc =>
-		ListSchema.parse({ id: doc.id, ...doc.data() })
-	);
-
-	return json({ lists: listsDocuments, listId: params.id, user });
 };
 
 const ListActionSchema = z.union(
@@ -53,60 +59,78 @@ const ListActionSchema = z.union(
 );
 
 export const action = async ({ request }: ActionArgs) => {
-	const user = await Session.isUserSessionValid(request);
+	try {
+		const user = await Session.isUserSessionValid(request);
 
-	if (!user) {
-		return redirect('/');
+		if (!user) {
+			return redirect('/');
+		}
+
+		const formData = await request.formData();
+
+		const action = ListActionSchema.parse(formData.get('action'));
+
+		if (action === 'create') {
+			return await createList(formData, user);
+		}
+
+		if (action === 'update') {
+			return await updateList(formData, user);
+		}
+
+		if (action === 'leave') {
+			return await leaveList(formData, user);
+		}
+
+		if (action === 'delete') {
+			return await deleteList(formData, user);
+		}
+
+		if (action === 'invite') {
+			return await inviteUsers(formData, user);
+		}
+
+		if (action == 'kick') {
+			return await kickUser(formData, user);
+		}
+
+		return json({
+			notification: { type: 'error', title: 'Error', text: 'Unexpected error' }
+		});
+	} catch (error: unknown) {
+		if (error instanceof ZodError) {
+			return json({
+				notification: {
+					type: 'error',
+					title: 'Error',
+					text: 'Invalid input'
+				}
+			});
+		}
+
+		if (error instanceof ActionError) {
+			return json({
+				notification: { type: 'error', title: 'Error', text: error.message }
+			});
+		}
+
+		return json({
+			notification: {
+				type: 'error',
+				title: 'Error',
+				text: 'Unexpected error ocurred'
+			}
+		});
 	}
-
-	const formData = await request.formData();
-
-	const action = ListActionSchema.parse(formData.get('action'));
-
-	if (action === 'create') {
-		await createList(formData, user);
-
-		return null;
-	}
-
-	if (action === 'update') {
-		await updateList(formData, user);
-
-		return null;
-	}
-
-	if (action === 'leave') {
-		await leaveList(formData, user);
-
-		return null;
-	}
-
-	if (action === 'delete') {
-		await deleteList(formData, user);
-
-		return null;
-	}
-
-	if (action === 'invite') {
-		await inviteUsers(formData, user);
-
-		return null;
-	}
-
-	if (action == 'kick') {
-		await kickUser(formData, user);
-
-		return null;
-	}
-
-	return null;
 };
 
 export default function Dashboard() {
 	const loaderData = useLoaderData<typeof loader>();
 
-	const lists = loaderData.lists.map((list, index) => (
-		<ListItem key={index} list={list}>
+	useAlerts();
+
+	const lists = loaderData.lists.map(list => (
+		<ListItem key={list.id} list={list}>
 			<UpdateListWidget list={list} />
 		</ListItem>
 	));

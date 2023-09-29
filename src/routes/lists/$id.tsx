@@ -1,7 +1,6 @@
 import { json, LoaderArgs, redirect, ActionArgs } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
-import { useState } from 'react';
-import { z } from 'zod';
+import { ZodError, z } from 'zod';
 import { Card } from '~/components/Card/Card';
 import { getList } from '~/controllers/list/getList';
 import { createTask } from '~/controllers/task/createTask';
@@ -30,29 +29,34 @@ import { SetResponsibleWidget } from '~/widgets/SetResponsibleWidget';
 import { SetCompleteWidget } from '~/widgets/SetCompleteWidget';
 import { DeleteTaskWidget } from '~/widgets/DeleteTaskWidget';
 import { ResponsibleImage } from '~/components/ResponsibleImage/ResponsibleImage';
-import { Button } from '~/components/Button/Button';
 import { MoreActionsWidget } from '~/widgets/MoreActionsWidget';
+import { ActionError } from '~/errors/ActionError';
+import { useAlerts } from '~/components/Alert/useAlerts';
 
 export const loader = async ({ request, params }: LoaderArgs) => {
-	const user = await Session.isUserSessionValid(request);
+	try {
+		const user = await Session.isUserSessionValid(request);
 
-	if (!user) {
-		return redirect('/');
+		if (!user) {
+			return redirect('/');
+		}
+
+		const formData = new FormData();
+
+		formData.append('listId', params.id || '');
+
+		const { listData, listSnapshot } = await getList(formData, user);
+
+		const tasksSnapshot = await listSnapshot.ref.collection('tasks').get();
+
+		const tasksDocuments = tasksSnapshot.docs.map(doc =>
+			TaskSchema.parse({ id: doc.id, ...doc.data() })
+		);
+
+		return json({ listData, tasks: tasksDocuments, user });
+	} catch (error: unknown) {
+		throw new Error('Unexpected error happened');
 	}
-
-	const formData = new FormData();
-
-	formData.append('listId', params.id || '');
-
-	const { listData, listSnapshot } = await getList(formData, user);
-
-	const tasksSnapshot = await listSnapshot.ref.collection('tasks').get();
-
-	const tasksDocuments = tasksSnapshot.docs.map(doc =>
-		TaskSchema.parse({ id: doc.id, ...doc.data() })
-	);
-
-	return json({ listData, tasks: tasksDocuments, user });
 };
 
 const TaskActionSchema = z.union(
@@ -67,53 +71,73 @@ const TaskActionSchema = z.union(
 );
 
 export const action = async ({ request, params }: ActionArgs) => {
-	const user = await Session.isUserSessionValid(request);
+	try {
+		const user = await Session.isUserSessionValid(request);
 
-	if (!user) {
-		return redirect('/');
+		if (!user) {
+			return redirect('/');
+		}
+
+		const formData = await request.formData();
+
+		formData.append('listId', params.id || '');
+
+		const action = TaskActionSchema.parse(formData.get('action'));
+
+		if (action === 'create') {
+			return await createTask(formData, user);
+		}
+
+		if (action === 'update') {
+			return await updateTask(formData, user);
+		}
+
+		if (action === 'delete') {
+			return await deleteTask(formData, user);
+		}
+
+		if (action === 'responsible') {
+			return await toggleResponsible(formData, user);
+		}
+
+		if (action === 'complete') {
+			return await toggleComplete(formData, user);
+		}
+
+		return json({
+			notification: { type: 'error', title: 'Error', text: 'Unexpected error' }
+		});
+	} catch (error: unknown) {
+		if (error instanceof ZodError) {
+			return json({
+				notification: {
+					type: 'error',
+					title: 'Error',
+					text: 'Invalid input'
+				}
+			});
+		}
+
+		if (error instanceof ActionError) {
+			return json({
+				notification: { type: 'error', title: 'Error', text: error.message }
+			});
+		}
+
+		return json({
+			notification: {
+				type: 'error',
+				title: 'Error',
+				text: 'Unexpected error ocurred'
+			}
+		});
 	}
-
-	const formData = await request.formData();
-
-	formData.append('listId', params.id || '');
-
-	const action = TaskActionSchema.parse(formData.get('action'));
-
-	if (action === 'create') {
-		await createTask(formData, user);
-
-		return null;
-	}
-
-	if (action === 'update') {
-		await updateTask(formData, user);
-
-		return null;
-	}
-
-	if (action === 'delete') {
-		await deleteTask(formData, user);
-
-		return null;
-	}
-
-	if (action === 'responsible') {
-		await toggleResponsible(formData, user);
-
-		return null;
-	}
-
-	if (action === 'complete') {
-		await toggleComplete(formData, user);
-
-		return null;
-	}
-
-	return null;
 };
 
 export default function ListPage() {
 	const { listData, tasks: listTasks, user } = useLoaderData<typeof loader>();
+
+	useAlerts();
 
 	const isUserListOwner = listData.author_id === user.id;
 
@@ -148,7 +172,7 @@ export default function ListPage() {
 
 		return (
 			<li
-				key={index}
+				key={task.id}
 				className={`flex justify-between items-center p-4 rounded text-gray-400 bg-gray-900 border ${getBorderColor()}`}
 			>
 				<div className="flex flex-col xl:flex-row -space-y-2 xl:-space-y-0 xl:-space-x-2 w-20 items-center">
@@ -168,14 +192,16 @@ export default function ListPage() {
 				<span className="flex flex-1 text-sm xl:text-base">{task.name}</span>
 
 				<div className="flex space-x-2 pl-6">
-					<div className="hidden xl:block">{participantsButtons}</div>
+					<div className="hidden xl:block xl:w-32">{participantsButtons}</div>
 					<MoreActionsWidget>
 						<div className="flex flex-col space-y-4">
 							{isUserTaskParticipant && (
 								<SetResponsibleWidget task={task} user={user} />
 							)}
 
-							<div className="block xl:hidden">{participantsButtons}</div>
+							<div className="flex flex-col w-full xl:hidden">
+								{participantsButtons}
+							</div>
 
 							<UpdateTaskWidget task={task} />
 

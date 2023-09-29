@@ -1,4 +1,4 @@
-import { useFetcher } from '@remix-run/react';
+import { Form } from '@remix-run/react';
 import { Button } from '~/components/Button/Button';
 import { Dialog } from '~/components/Dialog/Dialog';
 import { ListType, UserType } from '~/schema/Schema';
@@ -7,8 +7,6 @@ export const ParticipantsWidget: React.FC<{
 	listData: ListType;
 	user: UserType;
 }> = ({ listData, user }) => {
-	const kickFetcher = useFetcher();
-
 	return (
 		<Dialog
 			title="Participants"
@@ -20,14 +18,17 @@ export const ParticipantsWidget: React.FC<{
 			}
 		>
 			<ul>
-				{Object.values(listData.participants).map((participant, index) => (
-					<li key={index} className="flex items-center justify-between mb-4">
+				{Object.values(listData.participants).map(participant => (
+					<li
+						key={participant.id}
+						className="flex items-center justify-between mb-4"
+					>
 						<div className="flex flex-col text-gray-400">
 							<span>{participant.name}</span>
 							<span className="text-sm">{participant.email}</span>
 						</div>
 						{user.id === listData.author_id && (
-							<kickFetcher.Form method="post" action="/lists">
+							<Form method="post" action="/lists">
 								<input
 									name="listId"
 									type="hidden"
@@ -46,7 +47,7 @@ export const ParticipantsWidget: React.FC<{
 								>
 									Kick
 								</Button>
-							</kickFetcher.Form>
+							</Form>
 						)}
 					</li>
 				))}

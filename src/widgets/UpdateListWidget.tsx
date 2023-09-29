@@ -1,12 +1,10 @@
 import { Dialog } from '~/components/Dialog/Dialog';
 import { PencilSquareIcon } from '@heroicons/react/24/outline';
-import { useFetcher } from '@remix-run/react';
+import { Form } from '@remix-run/react';
 import { ListType } from '~/schema/Schema';
 import { Button } from '~/components/Button/Button';
 
 export const UpdateListWidget: React.FC<{ list: ListType }> = ({ list }) => {
-	const updateFetcher = useFetcher();
-
 	return (
 		<Dialog
 			title="Update list name"
@@ -15,7 +13,7 @@ export const UpdateListWidget: React.FC<{ list: ListType }> = ({ list }) => {
 				<PencilSquareIcon className="h-6 w-6 text-gray-300 cursor-pointer" />
 			}
 		>
-			<updateFetcher.Form method="post" action="/lists" className="flex flex-col">
+			<Form method="post" action="/lists" className="flex flex-col">
 				<input name="listId" type="hidden" value={list.id} />
 
 				<input
@@ -34,7 +32,7 @@ export const UpdateListWidget: React.FC<{ list: ListType }> = ({ list }) => {
 				>
 					Update
 				</Button>
-			</updateFetcher.Form>
+			</Form>
 		</Dialog>
 	);
 };

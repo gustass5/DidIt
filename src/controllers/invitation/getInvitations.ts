@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { ActionError } from '~/errors/ActionError';
 import { FirebaseServer } from '~/firebase/server/firebase.server';
 import {
 	InvitationType,
@@ -28,7 +29,7 @@ export const getInvitations = async ({
 			.where('invited.id', '==', userId)
 			.where('status', 'in', status);
 	} else {
-		throw new Error('Query be provided with either listId, userId');
+		throw new ActionError('Query must be provided with either listId, userId');
 	}
 
 	const invitationsSnapshot = await invitationsQuery.get();

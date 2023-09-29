@@ -1,7 +1,7 @@
 import { Combobox } from '@headlessui/react';
 import { Dialog } from '~/components/Dialog/Dialog';
 
-import { useFetcher } from '@remix-run/react';
+import { Form, useFetcher } from '@remix-run/react';
 import { useState, useEffect } from 'react';
 import { z } from 'zod';
 import { Button } from '~/components/Button/Button';
@@ -14,6 +14,7 @@ import {
 	InvitationType
 } from '~/schema/Schema';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/24/outline';
+import { Alert } from '~/components/Alert/Alert';
 
 type ComboboxUserType = (UserType & {
 	invited: boolean;
@@ -37,8 +38,6 @@ export const UserInvitationWidget: React.FC<{
 
 	const invitationsFetcher = useFetcher();
 
-	const inviteUserFetcher = useFetcher();
-
 	useEffect(() => {
 		usersFetcher.submit({}, { method: 'post', action: '/api/users' });
 		invitationsFetcher.submit(
@@ -55,8 +54,23 @@ export const UserInvitationWidget: React.FC<{
 			return;
 		}
 
+		if (!usersFetcher.data.success) {
+			Alert.fire({
+				icon: 'error',
+				title: 'Error',
+				text: invitationsFetcher.data.error
+			});
+
+			return;
+		}
+
 		if (usersFetcher.data?.users == undefined) {
-			throw new Error('Unable to retrieve users');
+			Alert.fire({
+				icon: 'error',
+				title: 'Error',
+				text: 'Unable to retrieve users'
+			});
+			return;
 		}
 
 		const users = Array.from(usersFetcher.data.users).map(user =>
@@ -71,8 +85,23 @@ export const UserInvitationWidget: React.FC<{
 			return;
 		}
 
+		if (!invitationsFetcher.data.success) {
+			Alert.fire({
+				icon: 'error',
+				title: 'Error',
+				text: invitationsFetcher.data.error
+			});
+
+			return;
+		}
+
 		if (invitationsFetcher.data?.invitations == undefined) {
-			throw new Error('Unable to retrieve invitations');
+			Alert.fire({
+				icon: 'error',
+				title: 'Error',
+				text: 'Unable to retrieve invitations'
+			});
+			return;
 		}
 
 		const invitations = Array.from(invitationsFetcher.data.invitations).map(
@@ -126,13 +155,12 @@ export const UserInvitationWidget: React.FC<{
 					</Button>
 				}
 			>
-				<inviteUserFetcher.Form method="post" action="/lists">
+				<Form method="post" action="/lists">
 					<input name="listId" type="hidden" value={listData.id} />
 					<input name="listName" type="hidden" value={listData.name} />
 					<Combobox
 						value={selectedUsers}
 						onChange={users => {
-							console.log('selected', selectedUsers);
 							setSelectedUsers(users);
 						}}
 						name="invited"
@@ -232,7 +260,7 @@ export const UserInvitationWidget: React.FC<{
 					>
 						Invite
 					</Button>
-				</inviteUserFetcher.Form>
+				</Form>
 			</Dialog>
 		</>
 	);

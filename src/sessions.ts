@@ -1,6 +1,8 @@
 import { createCookieSessionStorage } from '@remix-run/node';
 import { FirebaseServer } from './firebase/server/firebase.server';
 import { UserSchema, UserType } from './schema/Schema';
+import { ZodError } from 'zod';
+import { ActionError } from './errors/ActionError';
 
 const USER_SESSION_KEY = 'userToken';
 
@@ -42,10 +44,18 @@ const setUserSession = async (idToken: string, request: Request) => {
  * @returns If user session is valid, returns user data, otherwise null.
  */
 const isUserSessionValid = async (request: Request): Promise<UserType | null> => {
-	const token = await getUserToken(request);
-
 	try {
+		const token = await getUserToken(request);
+
+		if (token === null || token === undefined || token === '') {
+			return null;
+		}
+
 		const verifiedUser = await FirebaseServer.auth.verifySessionCookie(token, true);
+
+		if (verifiedUser === null || verifiedUser === undefined) {
+			return null;
+		}
 
 		const user = UserSchema.parse({
 			id: verifiedUser.uid,
@@ -56,9 +66,15 @@ const isUserSessionValid = async (request: Request): Promise<UserType | null> =>
 
 		return user;
 	} catch (error: any) {
-		// [TODO]: Handle error
-		console.log('error', error);
-		return null;
+		if (error instanceof ZodError) {
+			throw new ActionError('Invalid input');
+		}
+
+		if (error instanceof ActionError) {
+			throw error;
+		}
+
+		throw new ActionError('Unexpected error ocurred');
 	}
 };
 

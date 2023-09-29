@@ -1,5 +1,6 @@
 import { TaskSchema, UserType } from '~/schema/Schema';
 import { getList } from '../list/getList';
+import { json } from '@remix-run/node';
 
 export const createTask = async (formData: FormData, user: UserType) => {
 	const name = formData.get('name');
@@ -24,4 +25,8 @@ export const createTask = async (formData: FormData, user: UserType) => {
 	const { listSnapshot } = await getList(formData, user);
 
 	await listSnapshot.ref.collection('tasks').add(newTask);
+
+	return json({
+		notification: { type: 'success', title: 'Success', text: 'Task created' }
+	});
 };

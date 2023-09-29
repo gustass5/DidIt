@@ -10,6 +10,8 @@ import {
 } from '~/schema/Schema';
 import { getInvitations } from '../invitation/getInvitations';
 import { getList } from './getList';
+import { ActionError } from '~/errors/ActionError';
+import { json } from '@remix-run/node';
 
 const getFilteredInvitedUsers = (
 	formData: FormData,
@@ -89,10 +91,14 @@ export const inviteUsers = async (formData: FormData, user: UserType) => {
 	});
 
 	if (errors.length > 0) {
-		throw new Error(
+		throw new ActionError(
 			`Unexpected errors occurred during invitation: ${errors
 				.map(error => JSON.stringify(error))
 				.join(',')}`
 		);
 	}
+
+	return json({
+		notification: { type: 'success', title: 'Success', text: 'Invitation sent' }
+	});
 };

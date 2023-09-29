@@ -1,12 +1,10 @@
-import { useFetcher } from '@remix-run/react';
+import { Form } from '@remix-run/react';
 import { Button } from '~/components/Button/Button';
 import { TaskType } from '~/schema/Schema';
 
 export const DeleteTaskWidget: React.FC<{ task: TaskType }> = ({ task }) => {
-	const deleteFetcher = useFetcher();
-
 	return (
-		<deleteFetcher.Form method="post">
+		<Form method="post">
 			<input name="taskId" type="hidden" value={task.id} />
 			<Button
 				name="action"
@@ -15,6 +13,6 @@ export const DeleteTaskWidget: React.FC<{ task: TaskType }> = ({ task }) => {
 			>
 				DELETE
 			</Button>
-		</deleteFetcher.Form>
+		</Form>
 	);
 };

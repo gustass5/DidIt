@@ -1,3 +1,4 @@
+import { ActionError } from '~/errors/ActionError';
 import { FirebaseServer } from '~/firebase/server/firebase.server';
 import { getListId } from '~/helpers/getListId';
 import { ListSchema, UserType } from '~/schema/Schema';
@@ -15,17 +16,17 @@ export const getList = async (
 		.get();
 
 	if (!listSnapshot.exists) {
-		throw new Error('List does not exist');
+		throw new ActionError('List does not exist');
 	}
 
 	const listData = ListSchema.parse({ id: listSnapshot.id, ...listSnapshot.data() });
 
 	if (listData.deleted) {
-		throw new Error('List is not accessible');
+		throw new ActionError('List is not accessible');
 	}
 
 	if (!(user.id in listData.participants) && shouldBeAuthorized) {
-		throw new Error('List is not accessible');
+		throw new ActionError('List is not accessible');
 	}
 
 	return { listData, listSnapshot };
