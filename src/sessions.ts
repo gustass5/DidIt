@@ -66,6 +66,11 @@ const isUserSessionValid = async (request: Request): Promise<UserType | null> =>
 
 		return user;
 	} catch (error: any) {
+		// This just means that token expired or something went wrong on firebase side
+		if (error.constructor.name === 'FirebaseAuthError') {
+			return null;
+		}
+
 		if (error instanceof ZodError) {
 			throw new ActionError('Invalid input');
 		}
