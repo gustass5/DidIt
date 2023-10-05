@@ -16,22 +16,16 @@ import {
 	UsersIcon,
 	StopCircleIcon,
 	CheckCircleIcon,
-	CircleStackIcon,
-	UserCircleIcon
+	CircleStackIcon
 } from '@heroicons/react/24/outline';
-import { PlusCircleIcon } from '@heroicons/react/24/solid';
 import { InfoCard } from '~/components/InfoCard/InfoCard';
-import { UpdateTaskWidget } from '~/widgets/UpdateTaskWidget';
 import { DeleteListWidget } from '~/widgets/DeleteListWidget';
 import { LeaveListWidget } from '~/widgets/LeaveListWidget';
 import { CreateTaskWidget } from '~/widgets/CreateTaskWidget';
-import { SetResponsibleWidget } from '~/widgets/SetResponsibleWidget';
-import { SetCompleteWidget } from '~/widgets/SetCompleteWidget';
-import { DeleteTaskWidget } from '~/widgets/DeleteTaskWidget';
-import { ResponsibleImage } from '~/components/ResponsibleImage/ResponsibleImage';
 import { MoreActionsWidget } from '~/widgets/MoreActionsWidget';
 import { ActionError } from '~/errors/ActionError';
 import { useAlerts } from '~/components/Alert/useAlerts';
+import { TaskRow } from '~/components/TaskRow/TaskRow';
 
 export const loader = async ({ request, params }: LoaderArgs) => {
 	try {
@@ -141,79 +135,14 @@ export default function ListPage() {
 
 	const isUserListOwner = listData.author_id === user.id;
 
-	const tasks = listTasks.map((task, index) => {
-		const isUserTaskCreator = task.author_id === user.id;
-
-		const isUserTaskParticipant = task.responsible[user.id] !== undefined;
-
-		const taskResponsible = Object.values(task.responsible);
-
-		const getBorderColor = () => {
-			if (Object.values(task.completed).includes(true)) {
-				return 'border-green-400';
-			}
-
-			if (taskResponsible.length !== 0) {
-				return 'border-indigo-400';
-			}
-
-			return 'border-gray-400';
-		};
-
-		const participantsButtons = (
-			<>
-				{isUserTaskParticipant && <SetCompleteWidget task={task} user={user} />}
-
-				{!isUserTaskParticipant && (
-					<SetResponsibleWidget task={task} user={user} />
-				)}
-			</>
-		);
-
-		return (
-			<li
-				key={task.id}
-				className={`flex justify-between items-center p-4 rounded text-gray-400 bg-gray-900 border ${getBorderColor()}`}
-			>
-				<div className="flex flex-col xl:flex-row -space-y-2 xl:-space-y-0 xl:-space-x-2 w-20 items-center">
-					<ResponsibleImage image={taskResponsible[0]?.image} />
-
-					<ResponsibleImage image={taskResponsible[1]?.image} />
-
-					{taskResponsible.length <= 0 && (
-						<UserCircleIcon className="h-9 w-9 text-gray-400" />
-					)}
-
-					{taskResponsible.length >= 3 && (
-						<PlusCircleIcon className="h-9 w-9 text-gray-400" />
-					)}
-				</div>
-
-				<span className="flex flex-1 text-sm xl:text-base">{task.name}</span>
-
-				<div className="flex space-x-2 pl-6">
-					<div className="hidden xl:block xl:w-32">{participantsButtons}</div>
-					<MoreActionsWidget>
-						<div className="flex flex-col space-y-4">
-							{isUserTaskParticipant && (
-								<SetResponsibleWidget task={task} user={user} />
-							)}
-
-							<div className="flex flex-col w-full xl:hidden">
-								{participantsButtons}
-							</div>
-
-							<UpdateTaskWidget task={task} />
-
-							{(isUserListOwner || isUserTaskCreator) && (
-								<DeleteTaskWidget task={task} />
-							)}
-						</div>
-					</MoreActionsWidget>
-				</div>
-			</li>
-		);
-	});
+	const tasks = listTasks.map(task => (
+		<TaskRow
+			key={task.id}
+			task={task}
+			user={user}
+			isUserListOwner={isUserListOwner}
+		/>
+	));
 
 	return (
 		<div className="flex flex-col p-2 xl:p-6">

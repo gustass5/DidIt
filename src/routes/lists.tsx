@@ -188,7 +188,7 @@ export default function Dashboard() {
 				</div>
 
 				{loaderData.listId && (
-					<div className="flex-1">
+					<div className="flex-1 min-w-0">
 						<Outlet />
 					</div>
 				)}
