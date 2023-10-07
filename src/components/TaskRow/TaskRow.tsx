@@ -1,12 +1,10 @@
 import { TaskType, UserType } from '~/schema/Schema';
 import { SetCompleteWidget } from '~/widgets/SetCompleteWidget';
 import { SetResponsibleWidget } from '~/widgets/SetResponsibleWidget';
-import { ResponsibleImage } from '../ResponsibleImage/ResponsibleImage';
-import { UserCircleIcon } from '@heroicons/react/24/outline';
-import { PlusCircleIcon } from '@heroicons/react/24/solid';
 import { MoreActionsWidget } from '~/widgets/MoreActionsWidget';
 import { UpdateTaskWidget } from '~/widgets/UpdateTaskWidget';
 import { DeleteTaskWidget } from '~/widgets/DeleteTaskWidget';
+import { SeeTaskParticipantsWidget } from '~/widgets/SeeTaskParticipantsWidget';
 
 export const TaskRow: React.FC<{
 	task: TaskType;
@@ -45,19 +43,7 @@ export const TaskRow: React.FC<{
 		<li
 			className={`flex justify-between items-center p-4 rounded text-gray-400 bg-gray-900 border ${getBorderColor()}`}
 		>
-			<div className="flex flex-col xl:flex-row -space-y-2 xl:-space-y-0 xl:-space-x-2 w-16 items-center justify-center">
-				<ResponsibleImage image={taskResponsible[0]?.image} />
-
-				<ResponsibleImage image={taskResponsible[1]?.image} />
-
-				{taskResponsible.length <= 0 && (
-					<UserCircleIcon className="h-9 w-9 text-gray-400" />
-				)}
-
-				{taskResponsible.length >= 3 && (
-					<PlusCircleIcon className="h-9 w-9 text-gray-400" />
-				)}
-			</div>
+			<SeeTaskParticipantsWidget taskData={task} />
 
 			<div
 				className={`flex w-full flex-col overflow-hidden ${
