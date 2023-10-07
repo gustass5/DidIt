@@ -22,7 +22,7 @@ import { useCallback } from 'react';
 import Particles from 'react-particles';
 import type { Container, Engine } from 'tsparticles-engine';
 
-import { loadSlim } from 'tsparticles-slim'; // if you are going to use `loadSlim`, install the "tsparticles-slim" package too.
+import { loadSlim } from 'tsparticles-slim';
 import { particleOptions } from '~/helpers/particleOptions';
 
 export const loader = async ({ request }: LoaderArgs) => {
@@ -158,7 +158,65 @@ export default function Index() {
 				className="w-full h-screen absolute z-0"
 				init={particlesInit}
 				loaded={particlesLoaded}
-				options={particleOptions}
+				options={{
+					background: {
+						color: {
+							value: '#121212'
+						}
+					},
+					fpsLimit: 60,
+					interactivity: {
+						detectsOn: 'canvas',
+						events: {
+							onClick: {
+								enable: false
+							},
+							onHover: {
+								enable: false,
+								mode: 'repulse'
+							},
+							resize: true
+						}
+					},
+					particles: {
+						color: {
+							value: '#fb923c'
+						},
+						links: {
+							enable: false
+						},
+						collisions: {
+							enable: true
+						},
+						move: {
+							direction: 'top',
+							enable: true,
+							outMode: 'out',
+							random: true,
+							speed: 1,
+							straight: false
+						},
+						number: {
+							density: {
+								enable: true,
+								value_area: 125
+							},
+							value: 6
+						},
+						opacity: {
+							value: 0.65,
+							random: true
+						},
+						shape: {
+							type: 'triangle'
+						},
+						size: {
+							random: true,
+							value: 5
+						}
+					},
+					detectRetina: true
+				}}
 			/>
 			<div className="fixed inset-0 flex flex-col items-center justify-center">
 				<div className="flex items-center  justify-center px-4 text-2xl font-semibold text-orange-400 mb-4">
