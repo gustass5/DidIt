@@ -1,7 +1,7 @@
-import { Form } from '@remix-run/react';
 import { Button } from '~/components/Button/Button';
 import { Dialog } from '~/components/Dialog/Dialog';
 import { ListType, UserType } from '~/schema/Schema';
+import { KickUserWidget } from './KickUserWidget';
 
 export const SeeParticipantsWidget: React.FC<{
 	listData: ListType;
@@ -28,26 +28,10 @@ export const SeeParticipantsWidget: React.FC<{
 							<span className="text-sm">{participant.email}</span>
 						</div>
 						{user.id === listData.author_id && (
-							<Form method="post" action="/lists">
-								<input
-									name="listId"
-									type="hidden"
-									value={listData.id}
-								/>
-								<input
-									name="userId"
-									type="hidden"
-									value={participant.id}
-								/>
-								<Button
-									className="text-sm px-4 text-[#F64668] border-[#F64668]"
-									name="action"
-									type="submit"
-									value="kick"
-								>
-									Kick
-								</Button>
-							</Form>
+							<KickUserWidget
+								listId={listData.id}
+								participantId={participant.id}
+							/>
 						)}
 					</li>
 				))}
