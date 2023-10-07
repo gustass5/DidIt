@@ -8,9 +8,13 @@ function classNames(...classes: any[]) {
 export const UserMenu: React.FC<{ user: UserType }> = ({ user }) => (
 	<Menu as="div" className="relative ml-3 ">
 		<div>
-			<Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+			<Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none">
 				<span className="sr-only">Open user menu</span>
-				<img className="h-12 w-12 rounded-full" src={user.image} alt="" />
+				<img
+					className="h-12 w-12 rounded-full select-none"
+					src={user.image}
+					alt=""
+				/>
 			</Menu.Button>
 		</div>
 		<Transition
@@ -22,8 +26,8 @@ export const UserMenu: React.FC<{ user: UserType }> = ({ user }) => (
 			leaveFrom="transform opacity-100 scale-100"
 			leaveTo="transform opacity-0 scale-95"
 		>
-			<Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-gray-900 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-				<Menu.Item>
+			<Menu.Items className="absolute right-0 z-10 w-48 origin-top-right rounded-md bg-gray-900 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none border border-gray-600 my-2">
+				{/* <Menu.Item>
 					{({ active }) => (
 						<a
 							href="#"
@@ -48,14 +52,14 @@ export const UserMenu: React.FC<{ user: UserType }> = ({ user }) => (
 							Settings
 						</a>
 					)}
-				</Menu.Item>
+				</Menu.Item> */}
 				<Menu.Item>
 					{({ active }) => (
 						<a
-							href="#"
+							href="/api/signout"
 							className={classNames(
-								active ? 'bg-gray-100' : '',
-								'block px-4 py-2 text-sm text-gray-400'
+								active ? 'bg-gray-800' : '',
+								'block px-4 py-2 text-sm text-gray-400 rounded-md'
 							)}
 						>
 							Sign out
