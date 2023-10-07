@@ -109,6 +109,8 @@ export default function Index() {
 
 	useEffect(() => {
 		const loadRedirectResult = async () => {
+			setLoading(true);
+
 			const auth = FirebaseClient.auth;
 
 			try {
