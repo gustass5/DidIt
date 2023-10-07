@@ -12,7 +12,7 @@ import { BellAlertIcon, BellIcon } from '@heroicons/react/24/outline';
 import { Button } from '~/components/Button/Button';
 import { Alert } from '~/components/Alert/Alert';
 
-export const NotificationWidget: React.FC<{
+export const SeeNotificationsWidget: React.FC<{
 	user: UserType;
 }> = ({ user }) => {
 	const invitationsFetcher = useFetcher();

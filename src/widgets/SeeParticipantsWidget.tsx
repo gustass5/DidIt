@@ -3,7 +3,7 @@ import { Button } from '~/components/Button/Button';
 import { Dialog } from '~/components/Dialog/Dialog';
 import { ListType, UserType } from '~/schema/Schema';
 
-export const ParticipantsWidget: React.FC<{
+export const SeeParticipantsWidget: React.FC<{
 	listData: ListType;
 	user: UserType;
 }> = ({ listData, user }) => {

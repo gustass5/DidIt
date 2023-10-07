@@ -8,7 +8,7 @@ import { ZodError, z } from 'zod';
 import { createList } from '~/controllers/list/createList';
 import { updateList } from '~/controllers/list/updateList';
 import { inviteUsers } from '~/controllers/list/inviteUsers';
-import { NotificationWidget } from '~/widgets/NotificationWidget';
+import { SeeNotificationsWidget } from '~/widgets/SeeNotificationsWidget';
 import { leaveList } from '~/controllers/list/leaveList';
 import { deleteList } from '~/controllers/list/deleteList';
 import { kickUser } from '~/controllers/list/kickUser';
@@ -146,7 +146,7 @@ export default function Dashboard() {
 				</a>
 				<div className="flex flex-1 bg-gray-950 items-center justify-end px-2 xl:px-6">
 					<div className="flex items-center justify-center">
-						<NotificationWidget user={loaderData.user} />
+						<SeeNotificationsWidget user={loaderData.user} />
 
 						<UserMenu user={loaderData.user} />
 					</div>

@@ -10,7 +10,7 @@ import { toggleResponsible } from '~/controllers/task/toggleResponsible';
 import { updateTask } from '~/controllers/task/updateTask';
 import { TaskSchema } from '~/schema/Schema';
 import { Session } from '~/sessions';
-import { ParticipantsWidget } from '~/widgets/ParticipantsWidget';
+import { SeeParticipantsWidget } from '~/widgets/SeeParticipantsWidget';
 import { UserInvitationWidget } from '~/widgets/UserInvitationWidet';
 import {
 	UsersIcon,
@@ -194,7 +194,7 @@ export default function ListPage() {
 
 			<CreateTaskWidget>
 				<MoreActionsWidget title="List actions">
-					<ParticipantsWidget listData={listData} user={user} />
+					<SeeParticipantsWidget listData={listData} user={user} />
 
 					<UserInvitationWidget listData={listData} />
 
