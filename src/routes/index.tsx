@@ -7,7 +7,7 @@ import { FirebaseClient } from '~/firebase/client/firebase.client';
 
 import { ActionFunction, redirect, LoaderArgs, json } from '@remix-run/node';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSubmit } from '@remix-run/react';
 import { Session } from '~/sessions';
 import { FirebaseServer } from '~/firebase/server/firebase.server';
@@ -23,7 +23,6 @@ import Particles from 'react-particles';
 import type { Container, Engine } from 'tsparticles-engine';
 
 import { loadSlim } from 'tsparticles-slim';
-import { particleOptions } from '~/helpers/particleOptions';
 
 export const loader = async ({ request }: LoaderArgs) => {
 	try {
@@ -95,11 +94,14 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function Index() {
+	const [loading, setLoading] = useState(false);
+
 	const submit = useSubmit();
 
 	useAlerts();
 
 	const handleClickRedirect = () => {
+		setLoading(true);
 		const auth = FirebaseClient.auth;
 		const provider = new GoogleAuthProvider();
 		signInWithRedirect(auth, provider);
@@ -113,13 +115,16 @@ export default function Index() {
 				const result = await getRedirectResult(auth);
 
 				if (result === null) {
+					setLoading(false);
 					// Don't show any error here, because this page can be loaded from in-app redirect or in other way without having result
 					return;
 				}
+				setLoading(true);
 
 				const idToken = await result.user.getIdToken(true);
 
 				if (idToken === undefined) {
+					setLoading(false);
 					Alert.fire({
 						icon: 'error',
 						title: 'Error',
@@ -130,6 +135,8 @@ export default function Index() {
 
 				submit({ idToken }, { method: 'post' });
 			} catch (error: any) {
+				setLoading(false);
+
 				Alert.fire({
 					icon: 'error',
 					title: 'Error',
@@ -223,10 +230,11 @@ export default function Index() {
 					<Logo /> <span>DIDIT</span>
 				</div>
 				<button
+					disabled={loading}
 					className="p-3 uppercase font-semibold border rounded text-orange-400 border-orange-400 hover:bg-orange-400 hover:text-black"
 					onClick={() => handleClickRedirect()}
 				>
-					Login with Google
+					{loading ? 'Loading...' : 'Login with Google'}
 				</button>
 			</div>
 		</div>
