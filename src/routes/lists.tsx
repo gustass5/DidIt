@@ -139,7 +139,13 @@ export default function Dashboard() {
 		<div className="h-full flex flex-col w-full">
 			<div className="flex justify-between">
 				<a href="/lists">
-					<div className="flex items-center xl:w-[300px] px-2 py-6 xl:p-2 bg-gray-950 xl:bg-gray-900 h-24 text-orange-400">
+					<div
+						className={`flex items-center xl:w-[300px] px-2 py-6 xl:p-2 ${
+							loaderData.listId
+								? 'bg-gray-950 xl:bg-gray-900'
+								: 'bg-gray-950'
+						} h-24 text-orange-400`}
+					>
 						<Logo />
 						<span className="px-4 text-2xl font-semibold">DIDIT</span>
 					</div>
