@@ -16,6 +16,14 @@ import { ActionError } from '~/errors/ActionError';
 import { Alert } from '~/components/Alert/Alert';
 import { useAlerts } from '~/components/Alert/useAlerts';
 import { ZodError } from 'zod';
+import { Logo } from '~/components/Logo/Logo';
+
+import { useCallback } from 'react';
+import Particles from 'react-particles';
+import type { Container, Engine } from 'tsparticles-engine';
+
+import { loadSlim } from 'tsparticles-slim'; // if you are going to use `loadSlim`, install the "tsparticles-slim" package too.
+import { particleOptions } from '~/helpers/particleOptions';
 
 export const loader = async ({ request }: LoaderArgs) => {
 	try {
@@ -133,35 +141,36 @@ export default function Index() {
 		loadRedirectResult();
 	}, []);
 
+	const particlesInit = useCallback(async (engine: Engine) => {
+		await loadSlim(engine);
+	}, []);
+
+	const particlesLoaded = useCallback(async (container: Container | undefined) => {},
+	[]);
+
 	return (
-		<div style={{ fontFamily: 'system-ui, sans-serif', lineHeight: '1.4' }}>
-			<h1>Welcome to Remix</h1>
-			<ul className="bg-red-500">
-				<li>
-					<a
-						target="_blank"
-						href="https://remix.run/tutorials/blog"
-						rel="noreferrer"
-					>
-						15m Quickstart Blog Tutorial
-					</a>
-				</li>
-				<li>
-					<a
-						target="_blank"
-						href="https://remix.run/tutorials/jokes"
-						rel="noreferrer"
-					>
-						Deep Dive Jokes App Tutorial
-					</a>
-				</li>
-				<li>
-					<a target="_blank" href="https://remix.run/docs" rel="noreferrer">
-						Remix Docs
-					</a>
-				</li>
-			</ul>
-			<button onClick={() => handleClickRedirect()}>Login with Google</button>
+		<div
+			className="flex flex-col h-full w-full items-center justify-center"
+			style={{ fontFamily: 'system-ui, sans-serif', lineHeight: '1.4' }}
+		>
+			<Particles
+				id="tsparticles"
+				className="w-full h-screen absolute z-0"
+				init={particlesInit}
+				loaded={particlesLoaded}
+				options={particleOptions}
+			/>
+			<div className="fixed inset-0 flex flex-col items-center justify-center">
+				<div className="flex items-center  justify-center px-4 text-2xl font-semibold text-orange-400 mb-4">
+					<Logo /> <span>DIDIT</span>
+				</div>
+				<button
+					className="p-3 uppercase font-semibold border rounded text-orange-400 border-orange-400 hover:bg-orange-400 hover:text-black"
+					onClick={() => handleClickRedirect()}
+				>
+					Login with Google
+				</button>
+			</div>
 		</div>
 	);
 }
