@@ -99,6 +99,9 @@ export const SeeNotificationsWidget: React.FC<{
 			</Popover.Button>
 
 			<Popover.Panel className="flex flex-col space-y-6 p-4 m-6 absolute z-10 right-0 rounded bg-gray-900 border-2 border-gray-600">
+				{invitations.length <= 0 && (
+					<div className="text-gray-400">No notifications</div>
+				)}
 				{invitations.map(invitation => (
 					<div key={invitation.id} className="text-gray-400">
 						<div className="pb-2">
