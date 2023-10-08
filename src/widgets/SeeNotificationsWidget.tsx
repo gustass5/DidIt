@@ -16,6 +16,7 @@ export const SeeNotificationsWidget: React.FC<{
 	user: UserType;
 }> = ({ user }) => {
 	const invitationsFetcher = useFetcher();
+	const invitationHandleFetcher = useFetcher();
 
 	const [invitations, setInvitations] = useState<InvitationType[]>([]);
 
@@ -63,6 +64,27 @@ export const SeeNotificationsWidget: React.FC<{
 		setInvitations(invitations);
 	}, [invitationsFetcher]);
 
+	useEffect(() => {
+		if (invitationHandleFetcher.type !== 'done') {
+			return;
+		}
+
+		if (!invitationHandleFetcher.data.success) {
+			Alert.fire({
+				icon: 'error',
+				title: 'Error',
+				text: invitationHandleFetcher.data.error
+			});
+
+			return;
+		}
+		Alert.fire({
+			icon: 'success',
+			title: 'Success',
+			text: invitationHandleFetcher.data.successMessage
+		});
+	}, [invitationHandleFetcher]);
+
 	return (
 		<Popover>
 			<Popover.Button className="flex items-center justify-center mx-2 outline-none">
@@ -96,7 +118,7 @@ export const SeeNotificationsWidget: React.FC<{
 							</div>
 						</div>
 						<div className="flex w-full space-x-2">
-							<Form
+							<invitationHandleFetcher.Form
 								method="post"
 								action="/api/invitations/handle"
 								className="w-full"
@@ -113,9 +135,9 @@ export const SeeNotificationsWidget: React.FC<{
 								>
 									Accept
 								</Button>
-							</Form>
+							</invitationHandleFetcher.Form>
 
-							<Form
+							<invitationHandleFetcher.Form
 								method="post"
 								action="/api/invitations/handle"
 								className="w-full"
@@ -133,7 +155,7 @@ export const SeeNotificationsWidget: React.FC<{
 								>
 									Decline
 								</Button>
-							</Form>
+							</invitationHandleFetcher.Form>
 						</div>
 					</div>
 				))}

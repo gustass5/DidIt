@@ -13,7 +13,7 @@ export const action = async ({ request }: ActionArgs) => {
 		const user = await Session.isUserSessionValid(request);
 
 		if (!user) {
-			return json({ success: false, users: 'Not authorized' });
+			return json({ success: false, error: 'Not authorized' });
 		}
 
 		const usersSnapshot = await FirebaseServer.database
@@ -28,13 +28,13 @@ export const action = async ({ request }: ActionArgs) => {
 		return json({ success: true, users: usersDocuments });
 	} catch (error: unknown) {
 		if (error instanceof ZodError) {
-			return json({ success: false, users: 'Invalid input' });
+			return json({ success: false, error: 'Invalid input' });
 		}
 
 		if (error instanceof ActionError) {
-			return json({ success: false, users: error.message });
+			return json({ success: false, error: error.message });
 		}
 
-		return json({ success: false, users: 'Unexpected error ocurred' });
+		return json({ success: false, error: 'Unexpected error ocurred' });
 	}
 };

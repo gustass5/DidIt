@@ -52,7 +52,10 @@ export const action = async ({ request }: ActionArgs) => {
 
 		if (action === 'decline') {
 			await invitationSnapshot.ref.set(newInvitationData);
-			return null;
+			return json({
+				success: true,
+				successMessage: 'Invitation declined'
+			});
 		}
 
 		/**
@@ -79,16 +82,19 @@ export const action = async ({ request }: ActionArgs) => {
 
 		await batch.commit();
 
-		return json({ success: true });
+		return json({
+			success: true,
+			successMessage: 'Invitation accepted'
+		});
 	} catch (error: unknown) {
 		if (error instanceof ZodError) {
-			return json({ success: false, users: 'Invalid input' });
+			return json({ success: false, error: 'Invalid input' });
 		}
 
 		if (error instanceof ActionError) {
-			return json({ success: false, users: error.message });
+			return json({ success: false, error: error.message });
 		}
 
-		return json({ success: false, users: 'Unexpected error ocurred' });
+		return json({ success: false, error: 'Unexpected error ocurred' });
 	}
 };
