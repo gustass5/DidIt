@@ -7,11 +7,9 @@ import { Form, Outlet, useLoaderData } from '@remix-run/react';
 import { ZodError, z } from 'zod';
 import { createList } from '~/controllers/list/createList';
 import { updateList } from '~/controllers/list/updateList';
-import { inviteUsers } from '~/controllers/list/inviteUsers';
 import { SeeNotificationsWidget } from '~/widgets/SeeNotificationsWidget';
 import { leaveList } from '~/controllers/list/leaveList';
 import { deleteList } from '~/controllers/list/deleteList';
-import { kickUser } from '~/controllers/list/kickUser';
 import { ListItem } from '~/components/ListItem/ListItem';
 import { UpdateListWidget } from '~/widgets/UpdateListWidget';
 import { UserMenu } from '~/components/UserMenu/UserMenu';
@@ -45,14 +43,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 };
 
 const ListActionSchema = z.union(
-	[
-		z.literal('create'),
-		z.literal('update'),
-		z.literal('leave'),
-		z.literal('delete'),
-		z.literal('invite'),
-		z.literal('kick')
-	],
+	[z.literal('create'), z.literal('update'), z.literal('leave'), z.literal('delete')],
 	{
 		invalid_type_error: 'Invalid action type'
 	}
@@ -84,14 +75,6 @@ export const action = async ({ request }: ActionArgs) => {
 
 		if (action === 'delete') {
 			return await deleteList(formData, user);
-		}
-
-		if (action === 'invite') {
-			return await inviteUsers(formData, user);
-		}
-
-		if (action == 'kick') {
-			return await kickUser(formData, user);
 		}
 
 		return json({

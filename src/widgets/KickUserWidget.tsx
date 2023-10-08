@@ -21,7 +21,7 @@ export const KickUserWidget: React.FC<{ listId?: string; participantId?: string 
 	}
 
 	return (
-		<Form method="post" action="/lists">
+		<Form method="post" action={`/lists/${listId}`}>
 			<input name="listId" type="hidden" value={listId} />
 			<input name="userId" type="hidden" value={participantId} />
 			<Button

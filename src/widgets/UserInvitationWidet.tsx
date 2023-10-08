@@ -155,7 +155,7 @@ export const UserInvitationWidget: React.FC<{
 					</Button>
 				}
 			>
-				<Form method="post" action="/lists">
+				<Form method="post" action={`/lists/${listData.id}`}>
 					<input name="listId" type="hidden" value={listData.id} />
 					<input name="listName" type="hidden" value={listData.name} />
 					<Combobox
@@ -186,7 +186,7 @@ export const UserInvitationWidget: React.FC<{
 								</Combobox.Button>
 							</div>
 
-							<Combobox.Options className="absolute mt-1 max-h-60 w-full bg-gray-950 text-gray-400 overflow-auto rounded-md py-1 text-base shadow-lg  focus:outline-none sm:text-sm">
+							<Combobox.Options className="absolute mt-1 max-h-60 w-full bg-gray-950 text-gray-400 overflow-auto rounded-md py-1 text-base shadow-lg focus:outline-none sm:text-sm">
 								{filteredUsers.length === 0 && query !== '' ? (
 									<div className="relative cursor-default select-none py-2 px-4 ">
 										Nothing found.
@@ -196,9 +196,9 @@ export const UserInvitationWidget: React.FC<{
 										<Combobox.Option
 											key={user.id}
 											className={({ active }) =>
-												`relative cursor-default select-none py-2 pl-10 pr-4 ${
+												`relative cursor-pointer select-none py-2 pl-10 pr-4 ${
 													active
-														? 'bg-teal-600 text-white'
+														? 'bg-teal-950 text-white'
 														: 'text-gray-900'
 												}`
 											}

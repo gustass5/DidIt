@@ -26,6 +26,8 @@ import { MoreActionsWidget } from '~/widgets/MoreActionsWidget';
 import { ActionError } from '~/errors/ActionError';
 import { useAlerts } from '~/components/Alert/useAlerts';
 import { TaskRow } from '~/components/TaskRow/TaskRow';
+import { inviteUsers } from '~/controllers/list/inviteUsers';
+import { kickUser } from '~/controllers/list/kickUser';
 
 export const loader = async ({ request, params }: LoaderArgs) => {
 	try {
@@ -59,7 +61,9 @@ const TaskActionSchema = z.union(
 		z.literal('update'),
 		z.literal('responsible'),
 		z.literal('complete'),
-		z.literal('delete')
+		z.literal('delete'),
+		z.literal('invite'),
+		z.literal('kick')
 	],
 	{ invalid_type_error: 'Invalid action type' }
 );
@@ -96,6 +100,14 @@ export const action = async ({ request, params }: ActionArgs) => {
 
 		if (action === 'complete') {
 			return await toggleComplete(formData, user);
+		}
+
+		if (action === 'invite') {
+			return await inviteUsers(formData, user);
+		}
+
+		if (action == 'kick') {
+			return await kickUser(formData, user);
 		}
 
 		return json({
