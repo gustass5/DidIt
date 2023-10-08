@@ -51,7 +51,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 
 		return json({ listData, tasks: tasksDocuments, user });
 	} catch (error: unknown) {
-		throw new Error('Unexpected error happened');
+		return redirect('/lists');
 	}
 };
 
