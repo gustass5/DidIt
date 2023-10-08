@@ -9,7 +9,7 @@ import {
 	Scripts,
 	ScrollRestoration
 } from '@remix-run/react';
-import styles from './styles/app.css';
+import styles from '~/styles/app.css';
 let isMount = true;
 export function links() {
 	return [{ rel: 'stylesheet', href: styles }];
