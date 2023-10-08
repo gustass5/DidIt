@@ -15,6 +15,7 @@ import { Alert } from '~/components/Alert/Alert';
 export const SeeNotificationsWidget: React.FC<{
 	user: UserType;
 }> = ({ user }) => {
+	const [handled, setHandled] = useState(false);
 	const invitationsFetcher = useFetcher();
 	const invitationHandleFetcher = useFetcher();
 
@@ -30,7 +31,7 @@ export const SeeNotificationsWidget: React.FC<{
 			},
 			{ method: 'post', action: '/api/invitations/user' }
 		);
-	}, []);
+	}, [handled]);
 
 	useEffect(() => {
 		if (invitationsFetcher.type !== 'done') {
@@ -78,6 +79,7 @@ export const SeeNotificationsWidget: React.FC<{
 
 			return;
 		}
+		setHandled(true);
 		Alert.fire({
 			icon: 'success',
 			title: 'Success',
