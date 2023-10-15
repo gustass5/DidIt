@@ -99,7 +99,10 @@ async function handleFetch(event) {
       await cache.put(event.request, response.clone());
       return response;
     } catch (error) {
-      debug("Serving data from network failed, falling back to cache", url.pathname + url.search);
+      debug(
+        "Serving data from network failed, falling back to cache",
+        url.pathname + url.search
+      );
       const response = await caches.match(event.request);
       if (response) {
         response.headers.set("X-Remix-Worker", "yes");
@@ -122,7 +125,10 @@ async function handleFetch(event) {
       await cache.put(event.request, response.clone());
       return response;
     } catch (error) {
-      debug("Serving document from network failed, falling back to cache", url.pathname);
+      debug(
+        "Serving document from network failed, falling back to cache",
+        url.pathname
+      );
       const response = await caches.match(event.request);
       if (response) {
         return response;
@@ -134,7 +140,7 @@ async function handleFetch(event) {
 }
 var handlePush = (event) => {
   const data = JSON.parse(event == null ? void 0 : event.data.text());
-  const title = data.title ? data.title : "Remix PWA";
+  const title = data.title ? data.title : "DIDIT";
   const options = {
     body: data.body ? data.body : "Notification Body Text",
     icon: data.icon ? data.icon : "/icons/android-icon-192x192.png",
@@ -185,7 +191,10 @@ self.addEventListener("fetch", (event) => {
     })()
   );
 });
-async function appHandleFetch(event, { error, response }) {
+async function appHandleFetch(event, {
+  error,
+  response
+}) {
   return response;
 }
 /**
