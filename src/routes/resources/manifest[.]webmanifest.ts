@@ -4,7 +4,7 @@ import type { LoaderFunction } from '@remix-run/node';
 export let loader: LoaderFunction = () => {
 	return json(
 		{
-			short_name: 'DIDIIT',
+			short_name: 'DIDIT',
 			name: 'DIDIT',
 			start_url: '/',
 			display: 'standalone',
